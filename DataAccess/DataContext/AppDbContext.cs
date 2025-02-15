@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaApp.DataAccess.Entity;
 
-namespace SocialMediaApp.DataAccess.AppDbContext
+namespace SocialMediaApp.DataAccess.DataContext
 {
 	public class AppDbContext : DbContext
 	{
 		public DbSet<User> Users { get; set; }
 		public DbSet<Post> Posts { get; set; }
+		public DbSet<Role> Roles { get; set; }
 
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
