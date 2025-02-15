@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SocialMediaApp.DataAccess.AppDbContext;
+using SocialMediaApp.DataAccess.DataContext;
 
 namespace SocialMediaApp.BusinessLogic.Extensions
 {
