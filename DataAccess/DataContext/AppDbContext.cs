@@ -8,6 +8,9 @@ namespace SocialMediaApp.DataAccess.DataContext
 		public DbSet<User> Users { get; set; }
 		public DbSet<Post> Posts { get; set; }
 		public DbSet<Role> Roles { get; set; }
+		public DbSet<Category> Categories { get; set; }
+		public DbSet<UserInteraction> UserInteractions { get; set; }
+		public DbSet<UserCategoryPreference> UserCategoryPreferences { get; set; }
 
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -36,7 +39,7 @@ namespace SocialMediaApp.DataAccess.DataContext
 
 			modelBuilder.Entity<UserCategoryPreference>()
 				.HasOne(ucp => ucp.Category)
-				.WithMany(c => c.Preferences)
+				.WithMany(c => c.UserPreferences)
 				.HasForeignKey(ucp => ucp.CategoryId);
 
 			// UserInteraction - Relationship & Composite Key
