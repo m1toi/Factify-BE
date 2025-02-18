@@ -10,5 +10,7 @@
 		public int RoleId { get; set; }
 		public Role Role { get; set; }
 		public List<Post> Posts { get; set; }
+		public List<UserInteraction> Interactions { get; set; }
+		public List<UserCategoryPreference> Preferences { get; set; }
 	}
 }

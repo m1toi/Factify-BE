@@ -25,6 +25,43 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.WithMany(u => u.Posts)
 				.HasForeignKey(p => p.UserId);
 
+			// UserCategoryPreference - Composite Key
+			modelBuilder.Entity<UserCategoryPreference>()
+				.HasKey(ucp => new { ucp.UserId, ucp.CategoryId }); // Define composite primary key
+
+			modelBuilder.Entity<UserCategoryPreference>()
+				.HasOne(ucp => ucp.User)
+				.WithMany(u => u.Preferences)
+				.HasForeignKey(ucp => ucp.UserId);
+
+			modelBuilder.Entity<UserCategoryPreference>()
+				.HasOne(ucp => ucp.Category)
+				.WithMany(c => c.Preferences)
+				.HasForeignKey(ucp => ucp.CategoryId);
+
+			// UserInteraction - Relationship & Composite Key
+			modelBuilder.Entity<UserInteraction>()
+				.HasKey(ui => ui.InteractionId); // Normal primary key
+
+			modelBuilder.Entity<UserInteraction>()
+				.HasOne(ui => ui.User)
+				.WithMany(u => u.Interactions)
+				.HasForeignKey(ui => ui.UserId)
+				.OnDelete(DeleteBehavior.NoAction);  // Prevents cascading delete
+
+			modelBuilder.Entity<UserInteraction>()
+				.HasOne(ui => ui.Post)
+				.WithMany(p => p.Interactions)
+				.HasForeignKey(ui => ui.PostId)
+				.OnDelete(DeleteBehavior.NoAction);
+
+			// Category - Posts Relationship
+			modelBuilder.Entity<Post>()
+				.HasOne(p => p.Category)
+				.WithMany(c => c.Posts)
+				.HasForeignKey(p => p.CategoryId);
+
+
 			modelBuilder.Entity<Role>().HasData(
 				new Role { RoleId = 1, Name = "Admin" },
 				new Role { RoleId = 2, Name = "User" }
