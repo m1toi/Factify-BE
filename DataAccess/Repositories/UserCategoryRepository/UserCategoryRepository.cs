@@ -49,6 +49,13 @@ namespace SocialMediaApp.DataAccess.Repositories.UserCategoryRepository
 			return _context.UserCategoryPreferences.ToList();
 		}
 
+		public List<UserCategoryPreference> GetPreferencesByUser(int userId)
+		{
+			return _context.UserCategoryPreferences
+				.Where(ucp => ucp.UserId == userId)
+				.ToList();
+		}
+
 		public void Update(int userId, int categoryId, double score)
 		{
 			var userCategoryPreference = _context.UserCategoryPreferences

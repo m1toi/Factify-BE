@@ -66,5 +66,14 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 			_context.Posts.Remove(postToDelete);
 			SaveChanges(); 
 		}
+
+		public List<Post> GetPostsByCategories(List<int> categoryIds, int totalPosts = 20)
+		{
+			return _context.Posts
+					.Where(p => categoryIds.Contains(p.CategoryId))
+					.OrderByDescending(p=> p.CreatedAt)
+					.Take(totalPosts)
+					.ToList();
+		}
 	}
 }

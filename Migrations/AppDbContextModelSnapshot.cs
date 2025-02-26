@@ -36,7 +36,7 @@ namespace SocialMediaApp.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Post", b =>
@@ -151,7 +151,7 @@ namespace SocialMediaApp.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("UserCategoryPreference");
+                    b.ToTable("UserCategoryPreferences");
                 });
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.UserInteraction", b =>
@@ -183,7 +183,25 @@ namespace SocialMediaApp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserInteraction");
+                    b.ToTable("UserInteractions");
+                });
+
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.UserSeenPost", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SeenAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "PostId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("UserSeenPost");
                 });
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Post", b =>
@@ -219,7 +237,7 @@ namespace SocialMediaApp.Migrations
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.UserCategoryPreference", b =>
                 {
                     b.HasOne("SocialMediaApp.DataAccess.Entity.Category", "Category")
-                        .WithMany("Preferences")
+                        .WithMany("UserPreferences")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -254,16 +272,37 @@ namespace SocialMediaApp.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.UserSeenPost", b =>
+                {
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.Post", "Post")
+                        .WithMany("UserSeenPosts")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.User", "User")
+                        .WithMany("SeenPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Category", b =>
                 {
                     b.Navigation("Posts");
 
-                    b.Navigation("Preferences");
+                    b.Navigation("UserPreferences");
                 });
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Post", b =>
                 {
                     b.Navigation("Interactions");
+
+                    b.Navigation("UserSeenPosts");
                 });
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Role", b =>
@@ -278,6 +317,8 @@ namespace SocialMediaApp.Migrations
                     b.Navigation("Posts");
 
                     b.Navigation("Preferences");
+
+                    b.Navigation("SeenPosts");
                 });
 #pragma warning restore 612, 618
         }

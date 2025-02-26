@@ -11,7 +11,7 @@ namespace SocialMediaApp.DataAccess.DataContext
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<UserInteraction> UserInteractions { get; set; }
 		public DbSet<UserCategoryPreference> UserCategoryPreferences { get; set; }
-
+		public DbSet<UserSeenPost> UserSeenPosts { get; set; }
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,6 +63,23 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.HasOne(p => p.Category)
 				.WithMany(c => c.Posts)
 				.HasForeignKey(p => p.CategoryId);
+
+			modelBuilder.Entity<UserSeenPost>()
+				.HasKey(usp => new { usp.UserId, usp.PostId });
+
+			// Configure relationship from UserSeenPost to User
+			modelBuilder.Entity<UserSeenPost>()
+				.HasOne(usp => usp.User)
+				.WithMany(u => u.SeenPosts)      // Ensure your User entity has a property: List<UserSeenPost> SeenPosts { get; set; }
+				.HasForeignKey(usp => usp.UserId)
+				.OnDelete(DeleteBehavior.NoAction); // or NO ACTION, depending on your design
+
+			// Configure relationship from UserSeenPost to Post
+			modelBuilder.Entity<UserSeenPost>()
+				.HasOne(usp => usp.Post)
+				.WithMany(p => p.UserSeenPosts)  // Ensure your Post entity has a property: List<UserSeenPost> UserSeenPosts { get; set; }
+				.HasForeignKey(usp => usp.PostId)
+				.OnDelete(DeleteBehavior.NoAction);
 
 
 			modelBuilder.Entity<Role>().HasData(

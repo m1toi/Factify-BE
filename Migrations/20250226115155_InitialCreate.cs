@@ -14,7 +14,7 @@ namespace SocialMediaApp.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "Categories",
                 columns: table => new
                 {
                     CategoryId = table.Column<int>(type: "int", nullable: false)
@@ -23,7 +23,7 @@ namespace SocialMediaApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.CategoryId);
+                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,9 +78,9 @@ namespace SocialMediaApp.Migrations
                 {
                     table.PrimaryKey("PK_Posts", x => x.PostId);
                     table.ForeignKey(
-                        name: "FK_Posts_Category_CategoryId",
+                        name: "FK_Posts_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Category",
+                        principalTable: "Categories",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -92,7 +92,7 @@ namespace SocialMediaApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserCategoryPreference",
+                name: "UserCategoryPreferences",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -101,15 +101,15 @@ namespace SocialMediaApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserCategoryPreference", x => new { x.UserId, x.CategoryId });
+                    table.PrimaryKey("PK_UserCategoryPreferences", x => new { x.UserId, x.CategoryId });
                     table.ForeignKey(
-                        name: "FK_UserCategoryPreference_Category_CategoryId",
+                        name: "FK_UserCategoryPreferences_Categories_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Category",
+                        principalTable: "Categories",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserCategoryPreference_Users_UserId",
+                        name: "FK_UserCategoryPreferences_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -117,7 +117,7 @@ namespace SocialMediaApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInteraction",
+                name: "UserInteractions",
                 columns: table => new
                 {
                     InteractionId = table.Column<int>(type: "int", nullable: false)
@@ -130,14 +130,37 @@ namespace SocialMediaApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInteraction", x => x.InteractionId);
+                    table.PrimaryKey("PK_UserInteractions", x => x.InteractionId);
                     table.ForeignKey(
-                        name: "FK_UserInteraction_Posts_PostId",
+                        name: "FK_UserInteractions_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "PostId");
                     table.ForeignKey(
-                        name: "FK_UserInteraction_Users_UserId",
+                        name: "FK_UserInteractions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSeenPost",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    SeenAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSeenPost", x => new { x.UserId, x.PostId });
+                    table.ForeignKey(
+                        name: "FK_UserSeenPost_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId");
+                    table.ForeignKey(
+                        name: "FK_UserSeenPost_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId");
@@ -163,40 +186,48 @@ namespace SocialMediaApp.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCategoryPreference_CategoryId",
-                table: "UserCategoryPreference",
+                name: "IX_UserCategoryPreferences_CategoryId",
+                table: "UserCategoryPreferences",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInteraction_PostId",
-                table: "UserInteraction",
+                name: "IX_UserInteractions_PostId",
+                table: "UserInteractions",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInteraction_UserId",
-                table: "UserInteraction",
+                name: "IX_UserInteractions_UserId",
+                table: "UserInteractions",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSeenPost_PostId",
+                table: "UserSeenPost",
+                column: "PostId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserCategoryPreference");
+                name: "UserCategoryPreferences");
 
             migrationBuilder.DropTable(
-                name: "UserInteraction");
+                name: "UserInteractions");
+
+            migrationBuilder.DropTable(
+                name: "UserSeenPost");
 
             migrationBuilder.DropTable(
                 name: "Posts");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Users");
