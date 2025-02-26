@@ -5,7 +5,7 @@ using SocialMediaApp.DataAccess.Repositories.UserCategoryRepository;
 using SocialMediaApp.DataAccess.Repositories.UserInteractionRepository;
 using SocialMediaApp.DataAccess.Repositories.UserSeenPostRepository;
 
-namespace SocialMediaApp.BusinessLogic.Services
+namespace SocialMediaApp.BusinessLogic.Services.FeedService
 {
 	public class FeedService : IFeedService
 	{
