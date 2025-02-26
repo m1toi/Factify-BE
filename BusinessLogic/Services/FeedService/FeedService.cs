@@ -3,6 +3,7 @@ using SocialMediaApp.DataAccess.Repositories.CategoryRepository;
 using SocialMediaApp.DataAccess.Repositories.PostRepository;
 using SocialMediaApp.DataAccess.Repositories.UserCategoryRepository;
 using SocialMediaApp.DataAccess.Repositories.UserInteractionRepository;
+using SocialMediaApp.DataAccess.Repositories.UserSeenPostRepository;
 
 namespace SocialMediaApp.BusinessLogic.Services
 {
@@ -12,16 +13,19 @@ namespace SocialMediaApp.BusinessLogic.Services
 		private readonly IUserCategoryRepository _userCategoryRepository;
 		private readonly IUserInteractionRepository _userInteractionRepository;
 		private readonly ICategoryRepository _categoryRepository;
+		private readonly IUserSeenPostRepository _userSeenPostRepository;
 
 		public FeedService(IPostRepository postRepository,
 			IUserCategoryRepository userCategoryRepository,
 			IUserInteractionRepository userInteractionRepository,
-			ICategoryRepository categoryRepository)
+			ICategoryRepository categoryRepository,
+			IUserSeenPostRepository userSeenPostRepository)
 		{
 			_postRepository = postRepository;
 			_userCategoryRepository = userCategoryRepository;
 			_userInteractionRepository = userInteractionRepository;
 			_categoryRepository = categoryRepository;
+			_userSeenPostRepository = userSeenPostRepository;
 		}
 
 		public List<Post> GetPersonalizedFeed(int userId, int totalPosts = 20)
@@ -41,13 +45,15 @@ namespace SocialMediaApp.BusinessLogic.Services
 				.ToList();
 			var nonPreferredCategoryIds = categoryIds.Except(preferredCategoryIds).ToList();
 
-			var preferredPosts = _postRepository.GetPostsByCategories(preferredCategoryIds, preferredCount);
-			var nonPreferredPosts = _postRepository.GetPostsByCategories(nonPreferredCategoryIds, nonPreferredCount);
+			var seenPostIds = _userSeenPostRepository.GetSeenPostIds(userId);
+
+			var preferredPosts = _postRepository.GetPostsByCategoriesExcluding(preferredCategoryIds, seenPostIds, preferredCount);
+			var nonPreferredPosts = _postRepository.GetPostsByCategoriesExcluding(nonPreferredCategoryIds, seenPostIds, nonPreferredCount);
 
 			var combinedPosts=preferredPosts.Concat(nonPreferredPosts)
 											.OrderByDescending(p => p.CreatedAt)
 											.ToList();
-			return combinedPosts; 
+			return combinedPosts;	
 		}
 	}
 }

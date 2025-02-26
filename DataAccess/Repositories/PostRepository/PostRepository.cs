@@ -67,11 +67,11 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 			SaveChanges(); 
 		}
 
-		public List<Post> GetPostsByCategories(List<int> categoryIds, int totalPosts = 20)
+		public List<Post> GetPostsByCategoriesExcluding(List<int> categoryIds, List<int>seenPostIds, int totalPosts = 20)
 		{
-			return _context.Posts
-					.Where(p => categoryIds.Contains(p.CategoryId))
-					.OrderByDescending(p=> p.CreatedAt)
+			return  _context.Posts
+					.Where(p => categoryIds.Contains(p.CategoryId) && !seenPostIds.Contains(p.PostId))
+					.OrderByDescending(p => p.CreatedAt)
 					.Take(totalPosts)
 					.ToList();
 		}

@@ -1,6 +1,6 @@
 ﻿using SocialMediaApp.DataAccess.Entity;
 
-namespace SocialMediaApp.BusinessLogic.Services
+namespace SocialMediaApp.BusinessLogic.Services.FeedService
 {
 	public interface IFeedService
 	{
