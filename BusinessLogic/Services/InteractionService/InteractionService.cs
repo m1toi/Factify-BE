@@ -12,7 +12,7 @@ namespace SocialMediaApp.BusinessLogic.Services.InteractionService
 		private readonly IPostRepository _postRepository;
 		private readonly IUserSeenPostRepository _userSeenPostRepository;
 		private readonly IUserCategoryRepository _userCategoryRepository;
-		private InteractionService(
+		public InteractionService(
 			IUserInteractionRepository userInteractionRepository,
 			IPostRepository postRepository,
 			IUserSeenPostRepository userSeenPostRepository,
@@ -62,8 +62,40 @@ namespace SocialMediaApp.BusinessLogic.Services.InteractionService
 			}
 
 			var post = _postRepository.Get(postId);
-
-
+			int categoryId = post.CategoryId;
+			double scoreAdjustment = 0;
+			if (liked)
+			{
+				scoreAdjustment += 0.5;
+			}
+			if (shared)
+			{
+				scoreAdjustment += 1.0;
+			}
+			if(!liked && !shared)
+			{
+				scoreAdjustment -= 0.1;
+			}
+			try
+			{
+				_userCategoryRepository.Update(userId, categoryId, scoreAdjustment);
+			}
+			catch (Exception ex)
+			{
+				if(ex.Message.Contains("not found"))
+				{
+					_userCategoryRepository.Add(new UserCategoryPreference
+					{
+						UserId = userId,
+						CategoryId = categoryId,
+						Score = scoreAdjustment
+					});
+				}
+				else
+				{
+					Console.WriteLine(ex.Message);
+				}
+			}
 		}
 	}
 }
