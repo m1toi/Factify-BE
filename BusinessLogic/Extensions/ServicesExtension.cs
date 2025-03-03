@@ -7,6 +7,7 @@ using SocialMediaApp.DataAccess.Repositories.RoleRepository;
 using SocialMediaApp.DataAccess.Repositories.UserCategoryRepository;
 using SocialMediaApp.DataAccess.Repositories.UserInteractionRepository;
 using SocialMediaApp.DataAccess.Repositories.UserRepository;
+using SocialMediaApp.DataAccess.Repositories.UserSeenPostRepository;
 
 namespace SocialMediaApp.BusinessLogic.Extensions
 {
@@ -23,6 +24,7 @@ namespace SocialMediaApp.BusinessLogic.Extensions
 			services.AddScoped<ICategoryRepository, CategoryRepository>();
 			services.AddScoped<IRoleRepository, RoleRepository>();
 			services.AddScoped<IUserInteractionRepository, UserInteractionRepository>();
+			services.AddScoped<IUserSeenPostRepository, UserSeenPostRepository>();
 		}
 		public static void ConfigureDbContext(this IServiceCollection services, string connectionString)
 		{
