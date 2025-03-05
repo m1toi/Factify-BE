@@ -11,7 +11,7 @@ using SocialMediaApp.DataAccess.Repositories.UserSeenPostRepository;
 
 namespace SocialMediaApp.BusinessLogic.Extensions
 {
-	public static class ServicesExtension
+	public static class ServicesExtensions
 	{
 
 		public static void AddBusinessService(this IServiceCollection services)
