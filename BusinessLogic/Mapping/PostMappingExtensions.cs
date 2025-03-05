@@ -20,6 +20,26 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 			return postResponseDto;
 		}
 
-		public static Post ToPost
+		public static Post ToPost(this PostRequestDto postRequestDto)
+		{
+			var post = new Post
+			{
+				Question = postRequestDto.Question,
+				Answer = postRequestDto.Answer,
+				UserId = postRequestDto.UserId,
+				CategoryId = postRequestDto.CategoryId
+			};
+			return post;
+		}
+
+		public static List<PostResponseDto> ToListPostResponseDto(this List<Post> posts)
+		{
+			var postResponseDtos = new List<PostResponseDto>();
+			foreach (var post in posts)
+			{
+				postResponseDtos.Add(post.ToPostResponseDto());
+			}
+			return postResponseDtos;	
+		}
 	}
 }
