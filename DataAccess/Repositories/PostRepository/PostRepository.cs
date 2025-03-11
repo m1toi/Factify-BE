@@ -55,6 +55,7 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 			postToUpdate.Question = post.Question;
 			postToUpdate.Answer = post.Answer;
 			postToUpdate.CategoryId = post.CategoryId;
+			SaveChanges();
 		}
 		public void Delete(int id)
 		{
@@ -67,7 +68,7 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 			SaveChanges(); 
 		}
 
-		public List<Post> GetPostsByCategoriesExcluding(List<int> categoryIds, List<int>seenPostIds, int totalPosts = 20)
+		public List<Post> GetPostsByCategoriesExcludingSeen(List<int> categoryIds, List<int>seenPostIds, int totalPosts = 20)
 		{
 			return  _context.Posts
 					.Where(p => categoryIds.Contains(p.CategoryId) && !seenPostIds.Contains(p.PostId))

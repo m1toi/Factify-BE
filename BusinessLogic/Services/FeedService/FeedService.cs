@@ -47,8 +47,8 @@ namespace SocialMediaApp.BusinessLogic.Services.FeedService
 
 			var seenPostIds = _userSeenPostRepository.GetSeenPostIds(userId);
 
-			var preferredPosts = _postRepository.GetPostsByCategoriesExcluding(preferredCategoryIds, seenPostIds, preferredCount);
-			var nonPreferredPosts = _postRepository.GetPostsByCategoriesExcluding(nonPreferredCategoryIds, seenPostIds, nonPreferredCount);
+			var preferredPosts = _postRepository.GetPostsByCategoriesExcludingSeen(preferredCategoryIds, seenPostIds, preferredCount);
+			var nonPreferredPosts = _postRepository.GetPostsByCategoriesExcludingSeen(nonPreferredCategoryIds, seenPostIds, nonPreferredCount);
 
 			var combinedPosts=preferredPosts.Concat(nonPreferredPosts)
 											.OrderByDescending(p => p.CreatedAt)
