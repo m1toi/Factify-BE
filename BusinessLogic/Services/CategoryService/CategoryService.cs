@@ -21,7 +21,7 @@ namespace SocialMediaApp.BusinessLogic.Services.CategoryService
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            _categoryRepository.Delete(id);
         }
 
         public List<CategoryResponseDto> GetAll()
