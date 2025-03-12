@@ -1,4 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SocialMediaApp.BusinessLogic.Services.CategoryService;
+using SocialMediaApp.BusinessLogic.Services.FeedService;
+using SocialMediaApp.BusinessLogic.Services.InteractionService;
+using SocialMediaApp.BusinessLogic.Services.PostService;
+using SocialMediaApp.BusinessLogic.Services.UserService;
 using SocialMediaApp.DataAccess.DataContext;
 using SocialMediaApp.DataAccess.Repositories;
 using SocialMediaApp.DataAccess.Repositories.CategoryRepository;
@@ -25,13 +30,18 @@ namespace SocialMediaApp.BusinessLogic.Extensions
 			services.AddScoped<IRoleRepository, RoleRepository>();
 			services.AddScoped<IUserInteractionRepository, UserInteractionRepository>();
 			services.AddScoped<IUserSeenPostRepository, UserSeenPostRepository>();
+
+			//Configure services
+			services.AddScoped<ICategoryService, CategoryService>();
+			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IPostService, PostService>();
+			services.AddScoped<IInteractionService, InteractionService>();
+			services.AddScoped<IFeedService, FeedService>();
 		}
 		public static void ConfigureDbContext(this IServiceCollection services, string connectionString)
 		{
 			services.AddDbContext<AppDbContext>(
 			   options => options.UseSqlServer(connectionString));
 		}
-
-
 	}
 }
