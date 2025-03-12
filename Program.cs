@@ -12,6 +12,7 @@ var connectionString = config.GetConnectionString("DatabaseConnection");
 builder.Services.ConfigureDbContext(connectionString);
 
 // Add services to the container.
+builder.Services.AddBusinessService();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

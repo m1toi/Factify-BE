@@ -12,6 +12,7 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				Username = userRequestDto.Name,
 				Email = userRequestDto.Email,
 				Password = userRequestDto.Password,
+				ProfilePicture = "",
 				RoleId = userRequestDto.RoleId
 			};
 		}

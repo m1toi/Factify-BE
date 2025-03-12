@@ -35,6 +35,8 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
         }
         public void Update(int id, UserRequestDto updatedUserDto)
         {
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(updatedUserDto.Password);
+            updatedUserDto.Password = passwordHash;
             var updatedUser = updatedUserDto.ToUser();
             _userRepository.Update(id, updatedUser);
         }
