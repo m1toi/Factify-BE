@@ -11,51 +11,79 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 		}
 		public List<Post> GetAll()
 		{
-			return _context.Posts.ToList();
+			return _context.Posts
+						.Include(p => p.User)
+						.Include(p => p.Category)  
+						.ToList();
 		}
 		public Post Get(int id)
 		{
-			var post = _context.Posts.Find(id);
+			var post = _context.Posts
+				.Include(p => p.User)
+				.Include(p => p.Category) 
+				.FirstOrDefault(p => p.PostId == id);
+
 			if (post == null)
 			{
 				throw new Exception("Post not found");
 			}
+
 			return post;
 		}
-		public void Create(Post post)
+		public Post Create(Post post)
 		{
-			if(_context.Posts.Any(p => p.Question == post.Question))
+			if (!_context.Users.Any(u => u.UserId == post.UserId))
+			{
+				throw new ArgumentException("Invalid User ID.");
+			}
+			if (!_context.Categories.Any(c => c.CategoryId == post.CategoryId))
+			{
+				throw new ArgumentException("Invalid Category ID.");
+			}
+			if (_context.Posts.Any(p => p.Question == post.Question))
 			{
 				throw new Exception($"Post with question {post.Question} already exists");
 			}
+
 			_context.Posts.Add(post);
-			SaveChanges();
+			_context.SaveChanges(); 
+
+			return _context.Posts
+				   .Include(p => p.User)
+				   .Include(p => p.Category) 
+				   .Single(p => p.PostId == post.PostId);
 		}
-		public void Update(int id, Post post)
+		public Post Update(int id, Post post)
 		{
 			var postToUpdate = _context.Posts.Find(id);
 			if (postToUpdate == null)
 			{
 				throw new Exception("Post not found");
 			}
-			var category = _context.Categories.Find(post.CategoryId);
-			if (category == null)
+
+			if (!_context.Users.Any(u => u.UserId == post.UserId))
 			{
-				throw new Exception("Category not found");
+				throw new ArgumentException("Invalid User ID.");
 			}
-			var user = _context.Users.Find(post.UserId);
-			if (user == null)
+			if (!_context.Categories.Any(c => c.CategoryId == post.CategoryId))
 			{
-				throw new Exception("User not found");
+				throw new ArgumentException("Invalid Category ID.");
 			}
 			if (_context.Posts.Any(p => p.Question == post.Question && p.PostId != id))
 			{
 				throw new Exception($"Post with question {post.Question} already exists");
 			}
+
 			postToUpdate.Question = post.Question;
 			postToUpdate.Answer = post.Answer;
 			postToUpdate.CategoryId = post.CategoryId;
-			SaveChanges();
+
+			_context.SaveChanges();
+
+			return _context.Posts
+				.Include(p => p.User)
+				.Include(p => p.Category)
+				.Single(p => p.PostId == id); 
 		}
 		public void Delete(int id)
 		{

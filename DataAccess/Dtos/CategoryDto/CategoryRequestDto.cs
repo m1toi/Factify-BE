@@ -1,7 +1,7 @@
-﻿namespace SocialMediaApp.DataAccess.Dtos.CategoryDto
-{
-	public class CategoryRequestDto
+﻿	namespace SocialMediaApp.DataAccess.Dtos.CategoryDto
 	{
-		public string Name { get; set; }
+		public class CategoryRequestDto
+		{
+			public string Name { get; set; }
+		}
 	}
-}

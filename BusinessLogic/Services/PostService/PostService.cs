@@ -16,11 +16,11 @@ namespace SocialMediaApp.BusinessLogic.Services.PostService
 
         public PostResponseDto Create(PostRequestDto postDto)
         {
-            var post = postDto.ToPost();
-            post.CreatedAt = DateTime.UtcNow;
-            _postRepository.Create(post);
-            return post.ToPostResponseDto();
-        }
+			var post = postDto.ToPost();
+			post.CreatedAt = DateTime.UtcNow;
+			var createdPost = _postRepository.Create(post); 
+			return createdPost.ToPostResponseDto();
+		}
 
         public void Delete(int id)
         {
@@ -39,12 +39,22 @@ namespace SocialMediaApp.BusinessLogic.Services.PostService
             return post.ToPostResponseDto();
         }
 
-        public PostResponseDto Update(int id, PostRequestDto updatedPostDto)
-        {
-            var post = updatedPostDto.ToPost();
-            post.PostId = id;
-            _postRepository.Update(id, post);
-            return post.ToPostResponseDto();
-        }
-    }
+
+		public PostResponseDto Update(int id, PostRequestDto updatePostDto)
+		{
+			var existingPost = _postRepository.Get(id); 
+
+			if (updatePostDto.UserId != existingPost.UserId)
+			{
+				throw new UnauthorizedAccessException("You are not authorized to edit this post");
+			}
+			
+			existingPost.Question = updatePostDto.Question;
+			existingPost.Answer = updatePostDto.Answer;
+			existingPost.CategoryId = updatePostDto.CategoryId;
+			var updatedPost = _postRepository.Update(id, existingPost); 
+
+			return updatedPost.ToPostResponseDto(); 
+		}
+	}
 }

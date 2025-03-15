@@ -40,8 +40,8 @@ namespace SocialMediaApp.Controllers
 			{
 				return BadRequest(ModelState);
 			}
-			_postService.Create(postDto);
-			return Ok();
+			PostResponseDto createdPost = _postService.Create(postDto);
+			return CreatedAtAction(nameof(GetById), new { id = createdPost.PostId }, createdPost);
 		}
 
 		[HttpPut("{id}")]
@@ -55,8 +55,8 @@ namespace SocialMediaApp.Controllers
 			{
 				return BadRequest(ModelState);
 			}
-			_postService.Update(id, updatedPostDto);
-			return NoContent();
+			PostResponseDto updatedPost = _postService.Update(id, updatedPostDto); 
+			return Ok(updatedPost);
 		}
 
 		[HttpDelete("{id}")]
