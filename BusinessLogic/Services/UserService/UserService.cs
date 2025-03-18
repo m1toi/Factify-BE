@@ -1,4 +1,5 @@
 ﻿using SocialMediaApp.BusinessLogic.Mapping;
+using SocialMediaApp.DataAccess.Dtos.LoginDto;
 using SocialMediaApp.DataAccess.Dtos.UserDto;
 using SocialMediaApp.DataAccess.Repositories.UserRepository;
 
@@ -7,10 +8,12 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly AuthenticationService.IAuthenticationService _authenticationService;
 
-        public UserService(IUserRepository userRepository)
+		public UserService(IUserRepository userRepository, AuthenticationService.IAuthenticationService authenticationService)
         {
             _userRepository = userRepository;
+            _authenticationService = authenticationService;
         }
 
         public void Register(UserRequestDto userDto)
@@ -20,6 +23,18 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
             var user = userDto.ToUser();
             _userRepository.Register(user);
         }
+
+        public string Login(LoginRequestDto loginDto)
+        {
+            var user = _userRepository.GetByEmail(loginDto.Email);
+            if(!BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
+			{
+				throw new Exception("Invalid password");
+			}
+            string token = _authenticationService.GenerateToken(user);
+            return token;
+		}
+
         public List<UserResponseDto> GetAll()
         {
             var users = _userRepository.GetAll();

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using SocialMediaApp.BusinessLogic.Services.CategoryService;
 using SocialMediaApp.BusinessLogic.Services.FeedService;
 using SocialMediaApp.BusinessLogic.Services.InteractionService;
@@ -37,6 +38,7 @@ namespace SocialMediaApp.BusinessLogic.Extensions
 			services.AddScoped<IPostService, PostService>();
 			services.AddScoped<IInteractionService, InteractionService>();
 			services.AddScoped<IFeedService, FeedService>();
+			services.AddScoped<IAuthenticationService, AuthenticationService>();
 		}
 		public static void ConfigureDbContext(this IServiceCollection services, string connectionString)
 		{
