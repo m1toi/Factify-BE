@@ -1,4 +1,6 @@
-﻿using SocialMediaApp.DataAccess.Entity;
+﻿using SocialMediaApp.BusinessLogic.Mapping;
+using SocialMediaApp.DataAccess.Dtos.PostDto;
+using SocialMediaApp.DataAccess.Entity;
 using SocialMediaApp.DataAccess.Repositories.CategoryRepository;
 using SocialMediaApp.DataAccess.Repositories.PostRepository;
 using SocialMediaApp.DataAccess.Repositories.UserCategoryRepository;
@@ -28,7 +30,7 @@ namespace SocialMediaApp.BusinessLogic.Services.FeedService
 			_userSeenPostRepository = userSeenPostRepository;
 		}
 
-		public List<Post> GetPersonalizedFeed(int userId, int totalPosts = 20)
+		public List<PostResponseDto> GetPersonalizedFeed(int userId, int totalPosts = 20)
 		{
 			//Determine the percentage of posts 
 			int preferredCount = (int)(totalPosts * 0.8);
@@ -53,7 +55,8 @@ namespace SocialMediaApp.BusinessLogic.Services.FeedService
 			var combinedPosts=preferredPosts.Concat(nonPreferredPosts)
 											.OrderByDescending(p => p.CreatedAt)
 											.ToList();
-			return combinedPosts;	
+
+			return combinedPosts.ToListPostResponseDto();	
 		}
 	}
 }

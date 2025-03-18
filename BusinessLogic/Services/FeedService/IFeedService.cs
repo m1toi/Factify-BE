@@ -1,9 +1,9 @@
-﻿using SocialMediaApp.DataAccess.Entity;
+﻿using SocialMediaApp.DataAccess.Dtos.PostDto;
 
 namespace SocialMediaApp.BusinessLogic.Services.FeedService
 {
 	public interface IFeedService
 	{
-		public List<Post> GetPersonalizedFeed(int userId, int totalPosts = 20); 
+		public List<PostResponseDto> GetPersonalizedFeed(int userId, int totalPosts = 20); 
 	}
 }
