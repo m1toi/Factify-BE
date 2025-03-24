@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaApp.BusinessLogic.Services.CategoryService;
 using SocialMediaApp.BusinessLogic.Services.FeedService;
 using SocialMediaApp.BusinessLogic.Services.InteractionService;
 using SocialMediaApp.BusinessLogic.Services.PostService;
 using SocialMediaApp.BusinessLogic.Services.UserService;
+using SocialMediaApp.BusinessLogic.Services.AuthenticationService;
 using SocialMediaApp.DataAccess.DataContext;
 using SocialMediaApp.DataAccess.Repositories;
 using SocialMediaApp.DataAccess.Repositories.CategoryRepository;

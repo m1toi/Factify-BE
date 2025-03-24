@@ -15,7 +15,8 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				Answer = post.Answer,
 				CreatedAt = post.CreatedAt,
 				UserName = post.User.Username,
-				CategoryName = post.Category.Name
+				CategoryName = post.Category.Name,
+				UserId = post.UserId
 			};
 			return postResponseDto;
 		}

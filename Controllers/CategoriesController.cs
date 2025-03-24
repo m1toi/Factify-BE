@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SocialMediaApp.BusinessLogic.Services.CategoryService;
 using SocialMediaApp.DataAccess.Dtos.CategoryDto;
 
 namespace SocialMediaApp.Controllers
 {
-    [Route("api/Categories")]
+    [Authorize(Roles = "Admin")]    
+	[Route("api/Categories")]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -14,14 +16,16 @@ namespace SocialMediaApp.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<List<CategoryResponseDto>> GetAll()
+		[AllowAnonymous]
+		[HttpGet]
+		//[ProducesResponseType(StatusCodes.Status200OK)]
+		public ActionResult<List<CategoryResponseDto>> GetAll()
         {
             return Ok(_categoryService.GetAll());
         }
 
-        [HttpGet("{id}")]
+		[AllowAnonymous]
+		[HttpGet("{id}")]
         public ActionResult<CategoryResponseDto> GetById([FromRoute] int id)
         {
             return Ok(_categoryService.GetById(id));

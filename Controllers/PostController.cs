@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SocialMediaApp.BusinessLogic.Services.PostService;
 using SocialMediaApp.DataAccess.Dtos.PostDto;
 
 namespace SocialMediaApp.Controllers
 {
+	[Authorize]
 	[Route("api/Posts")]
 	public class PostController : ControllerBase
 	{
@@ -40,6 +43,15 @@ namespace SocialMediaApp.Controllers
 			{
 				return BadRequest(ModelState);
 			}
+
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (string.IsNullOrEmpty(userId))
+			{
+				return Unauthorized("Invalid user token.");
+			}
+
+			postDto.UserId = int.Parse(userId);
+
 			PostResponseDto createdPost = _postService.Create(postDto);
 			return CreatedAtAction(nameof(GetById), new { id = createdPost.PostId }, createdPost);
 		}
@@ -55,6 +67,19 @@ namespace SocialMediaApp.Controllers
 			{
 				return BadRequest(ModelState);
 			}
+
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			var existingPost = _postService.GetById(id);
+
+			//if (existingPost == null)
+			//{
+			//	return NotFound("Post not found.");
+			//}
+
+			if (existingPost.UserId.ToString() != userId)
+			{
+				return Forbid("You are not authorized to update this post.");
+			}
 			PostResponseDto updatedPost = _postService.Update(id, updatedPostDto); 
 			return Ok(updatedPost);
 		}
@@ -65,6 +90,20 @@ namespace SocialMediaApp.Controllers
 		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		public IActionResult Delete([FromRoute] int id)
 		{
+			var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			var existingPost = _postService.GetById(id);
+
+			//if (existingPost == null)
+			//{
+			//	return NotFound("Post not found.");
+			//}
+
+			// 🔒 Ensure only the post owner can delete it
+			if (existingPost.UserId.ToString() != userId)
+			{
+				return Forbid("You are not authorized to delete this post.");
+			}
+
 			_postService.Delete(id);
 			return NoContent();
 		}
