@@ -21,7 +21,8 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
             userDto.Password = passwordHash;
             var user = userDto.ToUser();
-            _userRepository.Register(user);
+            user.RoleId = 2;
+			_userRepository.Register(user);
         }
 
         public string Login(LoginRequestDto loginDto)
