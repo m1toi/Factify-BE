@@ -5,7 +5,7 @@ using SocialMediaApp.DataAccess.Dtos.CategoryDto;
 
 namespace SocialMediaApp.Controllers
 {
-    [Authorize(Roles = "Admin")]    
+    [Authorize(Roles = "User")]    
 	[Route("api/Categories")]
     public class CategoriesController : ControllerBase
     {

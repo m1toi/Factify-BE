@@ -37,10 +37,10 @@ namespace SocialMediaApp.DataAccess.Repositories.UserCategoryRepository
 			var userCategoryPreference = _context.UserCategoryPreferences
 				.FirstOrDefault(ucp => ucp.UserId == userId && ucp.CategoryId == categoryId);
 
-			if(userCategoryPreference == null)
-			{
-				throw new Exception("User category preference not found");
-			}
+			//if(userCategoryPreference == null)
+			//{
+			//	throw new Exception("User category preference not found");
+			//}
 			return userCategoryPreference;
 		}
 

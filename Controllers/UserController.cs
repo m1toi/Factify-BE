@@ -9,7 +9,7 @@ using SocialMediaApp.DataAccess.Entity;
 namespace SocialMediaApp.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Route("/api/Users")]
+	[Route("/api/Users")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

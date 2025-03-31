@@ -14,6 +14,7 @@ using SocialMediaApp.DataAccess.Repositories.UserCategoryRepository;
 using SocialMediaApp.DataAccess.Repositories.UserInteractionRepository;
 using SocialMediaApp.DataAccess.Repositories.UserRepository;
 using SocialMediaApp.DataAccess.Repositories.UserSeenPostRepository;
+using SocialMediaApp.BusinessLogic.Services.UserPreferenceService;
 
 namespace SocialMediaApp.BusinessLogic.Extensions
 {
@@ -39,6 +40,7 @@ namespace SocialMediaApp.BusinessLogic.Extensions
 			services.AddScoped<IInteractionService, InteractionService>();
 			services.AddScoped<IFeedService, FeedService>();
 			services.AddScoped<IAuthenticationService, AuthenticationService>();
+			services.AddScoped<IUserPreferenceService, UserPreferenceService>();
 		}
 		public static void ConfigureDbContext(this IServiceCollection services, string connectionString)
 		{
