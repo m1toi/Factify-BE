@@ -2,6 +2,6 @@
 {
 	public class UserPreferenceDto
 	{
-		public List<int>? CategoryIds { get; set; }
+		public List<int>? CategoryIds { get; set; } = new();
 	}
 }

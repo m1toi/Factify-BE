@@ -36,7 +36,7 @@ namespace SocialMediaApp.Controllers
         }
 
 		[AllowAnonymous]
-		[HttpPost("/login")]
+		[HttpPost("login")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

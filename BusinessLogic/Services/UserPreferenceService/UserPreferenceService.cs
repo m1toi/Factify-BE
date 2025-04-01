@@ -32,5 +32,11 @@ namespace SocialMediaApp.BusinessLogic.Services.UserPreferenceService
 			}
 
 		}
+
+		public bool HasPreference(int userId)
+		{
+			var preferences = _userCategoryRepository.GetPreferencesByUser(userId);
+			return preferences.Count > 0;
+		}
 	}
 }

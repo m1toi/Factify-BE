@@ -21,19 +21,40 @@ namespace SocialMediaApp.Controllers
 		[HttpPost]
 		public IActionResult Create([FromBody] UserPreferenceDto userPreferenceDto)
 		{
+			if(userPreferenceDto == null)
+			{
+				return BadRequest("No request from body received");
+			}
+
 			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
 
 			if (userIdClaim == null)
 			{
-				return Unauthorized(); 
+				return Unauthorized();
 			}
 
 			var userId = int.Parse(userIdClaim.Value);
 
 			_userPreferenceService.Create(userPreferenceDto, userId);
-			
+
 			return Ok();
 		}
 
+		[HttpGet("has-preferences")]
+		public IActionResult HasPreferences()
+		{
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+			if (userIdClaim == null)
+			{
+				return Unauthorized();
+			}
+
+			var userId = int.Parse(userIdClaim.Value);
+
+			bool hasPreferences = _userPreferenceService.HasPreference(userId);
+
+			return Ok(hasPreferences);
+		}
 	}
 }

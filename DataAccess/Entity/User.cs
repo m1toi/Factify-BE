@@ -13,6 +13,5 @@
 		public List<UserSeenPost> SeenPosts { get; set; }
 		public List<UserInteraction> Interactions { get; set; }
 		public List<UserCategoryPreference> Preferences { get; set; }
-
 	}
 }
