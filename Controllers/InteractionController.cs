@@ -36,5 +36,20 @@ namespace SocialMediaApp.Controllers
 			_interactionService.HandleInteraction(userId, postId, interactionDto.Liked, interactionDto.Shared);
 			return Ok();
 		}
+
+		[HttpPost("seen")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public IActionResult MarkPostAsSeen(int postId)
+		{
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (!int.TryParse(userIdClaim, out int userId))
+			{
+				return Unauthorized();
+			}
+			_interactionService.MarkPostAsSeen(userId, postId);
+			return Ok();
+		}
 	}
 }

@@ -82,7 +82,7 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 
 			return _context.Posts
 				.Include(p => p.User)
-				.Include(p => p.Category)
+				.Include(p => p.Category) 
 				.Single(p => p.PostId == id); 
 		}
 		public void Delete(int id)
@@ -100,6 +100,8 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 		{
 			return  _context.Posts
 					.Where(p => categoryIds.Contains(p.CategoryId) && !seenPostIds.Contains(p.PostId))
+					.Include(p => p.User)
+					.Include(p => p.Category)
 					.OrderByDescending(p => p.CreatedAt)
 					.Take(totalPosts)
 					.ToList();

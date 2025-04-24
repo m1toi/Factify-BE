@@ -26,7 +26,8 @@ namespace SocialMediaApp.BusinessLogic.Services.InteractionService
 		public void HandleInteraction(int userId, int postId, bool liked, bool shared)
 		{
 			var existingInteraction = _userInteractionRepository.GetAll()
-										.FirstOrDefault(i => i.User.UserId == userId);
+						.FirstOrDefault(i => i.User.UserId == userId && i.PostId == postId);
+
 			if (existingInteraction == null)
 			{
 				existingInteraction = new UserInteraction
@@ -46,19 +47,6 @@ namespace SocialMediaApp.BusinessLogic.Services.InteractionService
 				existingInteraction.Shared = shared;
 				existingInteraction.InteractionDate = DateTime.UtcNow;
 
-			}
-
-			try
-			{
-				_userSeenPostRepository.Add(new UserSeenPost
-				{
-					UserId = userId,
-					PostId = postId
-				});
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.Message);
 			}
 
 			var post = _postRepository.Get(postId);
@@ -97,5 +85,22 @@ namespace SocialMediaApp.BusinessLogic.Services.InteractionService
 				}
 			}
 		}
+
+		public void MarkPostAsSeen(int userId, int postId)
+		{
+			try
+			{
+				_userSeenPostRepository.Add(new UserSeenPost
+				{
+					UserId = userId,
+					PostId = postId
+				});
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Post already marked as seen: {ex.Message}");
+			}
+		}
+
 	}
 }
