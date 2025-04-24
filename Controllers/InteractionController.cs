@@ -37,6 +37,39 @@ namespace SocialMediaApp.Controllers
 			return Ok();
 		}
 
+		[HttpPost("like")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public IActionResult ToggleLike(int postId)
+		{
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (!int.TryParse(userIdClaim, out int userId))
+			{
+				return Unauthorized();
+			}
+
+			_interactionService.ToggleLike(userId, postId);
+			return Ok();
+		}
+
+		[HttpPost("share")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public IActionResult SharePost(int postId)
+		{
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (!int.TryParse(userIdClaim, out int userId))
+			{
+				return Unauthorized();
+			}
+
+			_interactionService.SharePost(userId, postId);
+			return Ok();
+		}
+
+
 		[HttpPost("seen")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,5 +84,22 @@ namespace SocialMediaApp.Controllers
 			_interactionService.MarkPostAsSeen(userId, postId);
 			return Ok();
 		}
+
+		[HttpPost("not-interested")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public IActionResult MarkNotInterested(int postId)
+		{
+			var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (!int.TryParse(userIdClaim, out int userId))
+			{
+				return Unauthorized();
+			}
+
+			_interactionService.MarkNotInterested(userId, postId);
+			return Ok();
+		}
+
 	}
 }
