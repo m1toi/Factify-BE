@@ -105,7 +105,22 @@ namespace SocialMediaApp.BusinessLogic.Services.InteractionService
 					Shared = false,
 					InteractionDate = DateTime.UtcNow
 				});
-				_userCategoryRepository.Update(userId, categoryId, 0.5);
+				var preference = _userCategoryRepository.Get(userId, categoryId);
+
+				if (preference == null)
+				{
+					_userCategoryRepository.Add(new UserCategoryPreference
+					{
+						UserId = userId,
+						CategoryId = categoryId,
+						Score = 0.5
+					});
+				}
+				else
+				{
+					_userCategoryRepository.Update(userId, categoryId, 0.5);
+				}
+
 			}
 			else
 			{
@@ -141,7 +156,22 @@ namespace SocialMediaApp.BusinessLogic.Services.InteractionService
 				existing.InteractionDate = DateTime.UtcNow;
 			}
 
-			_userCategoryRepository.Update(userId, categoryId, 1.0);
+			var preference = _userCategoryRepository.Get(userId, categoryId);
+
+			if (preference == null)
+			{
+				_userCategoryRepository.Add(new UserCategoryPreference
+				{
+					UserId = userId,
+					CategoryId = categoryId,
+					Score = 1
+				});
+			}
+			else
+			{
+				_userCategoryRepository.Update(userId, categoryId, 1);
+			}
+
 		}
 
 		public void MarkPostAsSeen(int userId, int postId)
