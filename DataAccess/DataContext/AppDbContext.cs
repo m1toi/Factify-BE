@@ -12,6 +12,10 @@ namespace SocialMediaApp.DataAccess.DataContext
 		public DbSet<UserInteraction> UserInteractions { get; set; }
 		public DbSet<UserCategoryPreference> UserCategoryPreferences { get; set; }
 		public DbSet<UserSeenPost> UserSeenPosts { get; set; }
+		public DbSet<Friendship> Friendships { get; set; }
+		public DbSet<Conversation> Conversations { get; set; }
+		public DbSet<Message> Messages { get; set; }
+
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,6 +68,8 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.WithMany(c => c.Posts)
 				.HasForeignKey(p => p.CategoryId);
 
+			modelBuilder.Entity<UserSeenPost>().ToTable("UserSeenPosts");
+
 			modelBuilder.Entity<UserSeenPost>()
 				.HasKey(usp => new { usp.UserId, usp.PostId });
 
@@ -80,6 +86,55 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.WithMany(p => p.UserSeenPosts)  // Ensure your Post entity has a property: List<UserSeenPost> UserSeenPosts { get; set; }
 				.HasForeignKey(usp => usp.PostId)
 				.OnDelete(DeleteBehavior.NoAction);
+		
+			// FRIENDSHIP relations:
+			modelBuilder.Entity<Friendship>()
+				.HasOne(f => f.User)
+				.WithMany(u => u.FriendshipsInitiated)
+				.HasForeignKey(f => f.UserId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Friendship>()
+				.HasOne(f => f.Friend)
+				.WithMany(u => u.FriendshipsReceived)
+				.HasForeignKey(f => f.FriendId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			// 🔹 CONVERSATION relations:
+			modelBuilder.Entity<Conversation>()
+				.HasOne(c => c.User1)
+				.WithMany(u => u.ConversationsAsUser1)
+				.HasForeignKey(c => c.User1Id)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Conversation>()
+				.HasOne(c => c.User2)
+				.WithMany(u => u.ConversationsAsUser2)
+				.HasForeignKey(c => c.User2Id)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Conversation>()
+				.HasIndex(c => new { c.User1Id, c.User2Id })
+				.IsUnique();
+
+			// 🔹 MESSAGE relations:
+			modelBuilder.Entity<Message>()
+				.HasOne(m => m.Conversation)
+				.WithMany(c => c.Messages)
+				.HasForeignKey(m => m.ConversationId)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			modelBuilder.Entity<Message>()
+				.HasOne(m => m.Sender)
+				.WithMany(u => u.SentMessages)
+				.HasForeignKey(m => m.SenderId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Message>()
+				.HasOne(m => m.Post)
+				.WithMany()
+				.HasForeignKey(m => m.PostId)
+				.OnDelete(DeleteBehavior.SetNull);
 
 
 			modelBuilder.Entity<Role>().HasData(

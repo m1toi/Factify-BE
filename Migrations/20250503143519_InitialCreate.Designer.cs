@@ -12,8 +12,8 @@ using SocialMediaApp.DataAccess.DataContext;
 namespace SocialMediaApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250310211509_Update1")]
-    partial class Update1
+    [Migration("20250503143519_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,100 @@ namespace SocialMediaApp.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Conversation", b =>
+                {
+                    b.Property<int>("ConversationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConversationId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("User1Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("User2Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("ConversationId");
+
+                    b.HasIndex("User2Id");
+
+                    b.HasIndex("User1Id", "User2Id")
+                        .IsUnique();
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Friendship", b =>
+                {
+                    b.Property<int>("FriendshipId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FriendshipId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FriendId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FriendshipId");
+
+                    b.HasIndex("FriendId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Friendships");
+                });
+
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Post", b =>
@@ -204,7 +298,71 @@ namespace SocialMediaApp.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("UserSeenPosts");
+                    b.ToTable("UserSeenPosts", (string)null);
+                });
+
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Conversation", b =>
+                {
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.User", "User1")
+                        .WithMany("ConversationsAsUser1")
+                        .HasForeignKey("User1Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.User", "User2")
+                        .WithMany("ConversationsAsUser2")
+                        .HasForeignKey("User2Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
+                });
+
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Friendship", b =>
+                {
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.User", "Friend")
+                        .WithMany("FriendshipsReceived")
+                        .HasForeignKey("FriendId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.User", "User")
+                        .WithMany("FriendshipsInitiated")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Friend");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Message", b =>
+                {
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SocialMediaApp.DataAccess.Entity.User", "Sender")
+                        .WithMany("SentMessages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Post", b =>
@@ -301,6 +459,11 @@ namespace SocialMediaApp.Migrations
                     b.Navigation("UserPreferences");
                 });
 
+            modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.Post", b =>
                 {
                     b.Navigation("Interactions");
@@ -315,6 +478,14 @@ namespace SocialMediaApp.Migrations
 
             modelBuilder.Entity("SocialMediaApp.DataAccess.Entity.User", b =>
                 {
+                    b.Navigation("ConversationsAsUser1");
+
+                    b.Navigation("ConversationsAsUser2");
+
+                    b.Navigation("FriendshipsInitiated");
+
+                    b.Navigation("FriendshipsReceived");
+
                     b.Navigation("Interactions");
 
                     b.Navigation("Posts");
@@ -322,6 +493,8 @@ namespace SocialMediaApp.Migrations
                     b.Navigation("Preferences");
 
                     b.Navigation("SeenPosts");
+
+                    b.Navigation("SentMessages");
                 });
 #pragma warning restore 612, 618
         }

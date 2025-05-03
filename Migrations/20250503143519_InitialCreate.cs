@@ -63,6 +63,61 @@ namespace SocialMediaApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Conversations",
+                columns: table => new
+                {
+                    ConversationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    User1Id = table.Column<int>(type: "int", nullable: false),
+                    User2Id = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conversations", x => x.ConversationId);
+                    table.ForeignKey(
+                        name: "FK_Conversations_Users_User1Id",
+                        column: x => x.User1Id,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Conversations_Users_User2Id",
+                        column: x => x.User2Id,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Friendships",
+                columns: table => new
+                {
+                    FriendshipId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    FriendId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsConfirmed = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Friendships", x => x.FriendshipId);
+                    table.ForeignKey(
+                        name: "FK_Friendships_Users_FriendId",
+                        column: x => x.FriendId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Friendships_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -117,6 +172,42 @@ namespace SocialMediaApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    MessageId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ConversationId = table.Column<int>(type: "int", nullable: false),
+                    SenderId = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: true),
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.MessageId);
+                    table.ForeignKey(
+                        name: "FK_Messages_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "ConversationId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Messages_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Messages_Users_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserInteractions",
                 columns: table => new
                 {
@@ -144,7 +235,7 @@ namespace SocialMediaApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserSeenPost",
+                name: "UserSeenPosts",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
@@ -153,14 +244,14 @@ namespace SocialMediaApp.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserSeenPost", x => new { x.UserId, x.PostId });
+                    table.PrimaryKey("PK_UserSeenPosts", x => new { x.UserId, x.PostId });
                     table.ForeignKey(
-                        name: "FK_UserSeenPost_Posts_PostId",
+                        name: "FK_UserSeenPosts_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "PostId");
                     table.ForeignKey(
-                        name: "FK_UserSeenPost_Users_UserId",
+                        name: "FK_UserSeenPosts_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId");
@@ -174,6 +265,42 @@ namespace SocialMediaApp.Migrations
                     { 1, "Admin" },
                     { 2, "User" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Conversations_User1Id_User2Id",
+                table: "Conversations",
+                columns: new[] { "User1Id", "User2Id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Conversations_User2Id",
+                table: "Conversations",
+                column: "User2Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Friendships_FriendId",
+                table: "Friendships",
+                column: "FriendId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Friendships_UserId",
+                table: "Friendships",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ConversationId",
+                table: "Messages",
+                column: "ConversationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_PostId",
+                table: "Messages",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_CategoryId",
@@ -206,8 +333,8 @@ namespace SocialMediaApp.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSeenPost_PostId",
-                table: "UserSeenPost",
+                name: "IX_UserSeenPosts_PostId",
+                table: "UserSeenPosts",
                 column: "PostId");
         }
 
@@ -215,13 +342,22 @@ namespace SocialMediaApp.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Friendships");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
                 name: "UserCategoryPreferences");
 
             migrationBuilder.DropTable(
                 name: "UserInteractions");
 
             migrationBuilder.DropTable(
-                name: "UserSeenPost");
+                name: "UserSeenPosts");
+
+            migrationBuilder.DropTable(
+                name: "Conversations");
 
             migrationBuilder.DropTable(
                 name: "Posts");
