@@ -22,7 +22,8 @@ namespace SocialMediaApp.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public ActionResult<List<MessageResponseDto>> GetMessagesByConversation([FromRoute] int conversationId)
 		{
-			var messages = _messageService.GetMessagesByConversation(conversationId);
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+			var messages = _messageService.GetMessagesByConversation(conversationId, userId);
 			return Ok(messages);
 		}
 

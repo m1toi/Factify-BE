@@ -22,11 +22,22 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 			_friendshipRepository = friendshipRepository;
 		}
 
-		public List<MessageResponseDto> GetMessagesByConversation(int conversationId)
+		public List<MessageResponseDto> GetMessagesByConversation(int conversationId, int userId)
 		{
+			// 1️⃣ Get conversation
+			var conversation = _conversationRepository.GetConversation(conversationId);
+			if (conversation == null)
+				throw new Exception("Conversation not found.");
+
+			// 2️⃣ Validate user is a participant
+			if (conversation.User1Id != userId && conversation.User2Id != userId)
+				throw new UnauthorizedAccessException("You are not a participant in this conversation.");
+
+			// 3️⃣ Fetch messages
 			var messages = _messageRepository.GetMessagesByConversation(conversationId);
 			return messages.ToListMessageResponseDto();
 		}
+
 
 		public MessageResponseDto GetMessage(int messageId)
 		{
@@ -36,16 +47,16 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 
 		public MessageResponseDto SendMessage(MessageRequestDto messageDto)
 		{
-			// 1️⃣ Get conversation
+			//  Get conversation
 			var conversation = _conversationRepository.GetConversation(messageDto.ConversationId);
 			if (conversation == null)
 				throw new Exception("Conversation not found.");
 
-			// 2️⃣ Validate sender is participant
+			//  Validate sender is participant
 			if (conversation.User1Id != messageDto.SenderId && conversation.User2Id != messageDto.SenderId)
 				throw new UnauthorizedAccessException("User is not a participant in this conversation.");
 
-			// 3️⃣ Validate friendship exists and confirmed
+			// Validate friendship exists and confirmed
 			bool areFriends = _friendshipRepository.AreUsersFriends(conversation.User1Id, conversation.User2Id);
 			if (!areFriends)
 				throw new UnauthorizedAccessException("Users are not friends. Cannot send message.");

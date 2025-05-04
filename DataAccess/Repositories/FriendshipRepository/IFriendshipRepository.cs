@@ -8,6 +8,8 @@ namespace SocialMediaApp.DataAccess.Repositories.FriendshipRepository
 		Friendship GetFriendship(int friendshipId);
 		List<Friendship> GetUserFriendships(int userId);
 		Friendship CreateFriendship(Friendship friendship);
+		public void UpdateFriendship(Friendship friendship);
+
 		void DeleteFriendship(int friendshipId);
 	}
 }

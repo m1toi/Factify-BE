@@ -79,7 +79,6 @@ namespace SocialMediaApp.Controllers
 			return Ok("Friend request accepted.");
 		}
 
-
 		[HttpDelete("{friendshipId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
