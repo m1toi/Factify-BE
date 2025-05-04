@@ -1,13 +1,14 @@
-﻿using SocialMediaApp.DataAccess.Entity;
+﻿using SocialMediaApp.DataAccess.Dtos.FriendshipDto;
 
-namespace SocialMediaApp.DataAccess.Repositories.FriendshipRepository
+namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 {
-	public interface IFriendshipRepository
+	public interface IFriendshipService
 	{
 		bool AreUsersFriends(int userId, int friendId);
-		Friendship GetFriendship(int friendshipId);
-		List<Friendship> GetUserFriendships(int userId);
-		Friendship CreateFriendship(Friendship friendship);
+		FriendshipResponseDto GetFriendship(int friendshipId);
+		List<FriendshipResponseDto> GetUserFriendships(int userId);
+		FriendshipResponseDto CreateFriendship(FriendshipRequestDto friendshipDto);
+		void AcceptFriendRequest(int friendshipId);
 		void DeleteFriendship(int friendshipId);
 	}
 }

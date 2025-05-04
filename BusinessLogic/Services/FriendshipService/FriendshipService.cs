@@ -1,53 +1,58 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SocialMediaApp.DataAccess.DataContext;
-using SocialMediaApp.DataAccess.Entity;
+﻿using SocialMediaApp.BusinessLogic.Mapping;
+using SocialMediaApp.DataAccess.Dtos.FriendshipDto;
+using SocialMediaApp.DataAccess.Repositories.FriendshipRepository;
 
-namespace SocialMediaApp.DataAccess.Repositories.FriendshipRepository
+namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 {
-	public class FriendshipRepository : BaseRepository, IFriendshipRepository
+	public class FriendshipService : IFriendshipService
 	{
-		public FriendshipRepository(AppDbContext context) : base(context) { }
+		private readonly IFriendshipRepository _friendshipRepository;
+
+		public FriendshipService(IFriendshipRepository friendshipRepository)
+		{
+			_friendshipRepository = friendshipRepository;
+		}
 
 		public bool AreUsersFriends(int userId, int friendId)
 		{
-			return _context.Friendships.Any(f =>
-				(f.UserId == userId && f.FriendId == friendId && f.IsConfirmed) ||
-				(f.UserId == friendId && f.FriendId == userId && f.IsConfirmed));
+			return _friendshipRepository.AreUsersFriends(userId, friendId);
 		}
 
-		public Friendship GetFriendship(int friendshipId)
+		public FriendshipResponseDto GetFriendship(int friendshipId)
 		{
-			var friendship = _context.Friendships.FirstOrDefault(f => f.FriendshipId == friendshipId);
+			var friendship = _friendshipRepository.GetFriendship(friendshipId);
+			return friendship.ToFriendshipResponseDto();
+		}
+
+		public List<FriendshipResponseDto> GetUserFriendships(int userId)
+		{
+			var friendships = _friendshipRepository.GetUserFriendships(userId);
+			return friendships.ToListFriendshipResponseDto();
+		}
+
+		public FriendshipResponseDto CreateFriendship(FriendshipRequestDto friendshipDto)
+		{
+			var friendshipEntity = friendshipDto.ToFriendship();
+			var createdFriendship = _friendshipRepository.CreateFriendship(friendshipEntity);
+			return createdFriendship.ToFriendshipResponseDto();
+		}
+
+		public void AcceptFriendRequest(int friendshipId)
+		{
+			var friendship = _friendshipRepository.GetFriendship(friendshipId);
+
 			if (friendship == null)
-				throw new Exception($"Friendship with ID {friendshipId} not found");
-			return friendship;
+				throw new Exception("Friendship not found.");
+
+			friendship.IsConfirmed = true;
+
+			_friendshipRepository.UpdateFriendship(friendship);
 		}
 
-		public List<Friendship> GetUserFriendships(int userId)
-		{
-			return _context.Friendships
-				.Where(f => f.UserId == userId || f.FriendId == userId)
-				.ToList();
-		}
-
-		public Friendship CreateFriendship(Friendship friendship)
-		{
-			if (AreUsersFriends(friendship.UserId, friendship.FriendId))
-				throw new Exception("Friendship already exists.");
-
-			_context.Friendships.Add(friendship);
-			_context.SaveChanges();
-			return friendship;
-		}
 
 		public void DeleteFriendship(int friendshipId)
 		{
-			var friendship = _context.Friendships.Find(friendshipId);
-			if (friendship == null)
-				throw new Exception($"Friendship with ID {friendshipId} not found");
-
-			_context.Friendships.Remove(friendship);
-			_context.SaveChanges();
+			_friendshipRepository.DeleteFriendship(friendshipId);
 		}
 	}
 }
