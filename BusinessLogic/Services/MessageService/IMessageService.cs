@@ -6,7 +6,7 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 	{
 		public List<MessageResponseDto> GetMessagesByConversation(int conversationId, int userId);
 		MessageResponseDto GetMessage(int messageId);
-		MessageResponseDto SendMessage(MessageRequestDto messageDto);
+	    Task<MessageResponseDto> SendMessage(MessageRequestDto messageDto);
 		void DeleteMessage(int messageId);
 	}
 }

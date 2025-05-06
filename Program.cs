@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SocialMediaApp.BusinessLogic.Extensions; // Your extension methods
+using SocialMediaApp.SignalR;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,9 @@ builder.Services.ConfigureDbContext(connectionString); // Using your extension m
 
 // --- Services ---
 builder.Services.AddBusinessService();  // Using your extension method
+
+//--- SignalR ---
+builder.Services.AddSignalR();
 
 // --- Controllers ---
 builder.Services.AddControllers();
@@ -106,5 +110,7 @@ app.UseAuthentication(); // MUST come before UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<MessageHub>("/hubs/message");
 
 app.Run();

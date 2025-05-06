@@ -3,6 +3,8 @@ using SocialMediaApp.DataAccess.Dtos.MessageDto;
 using SocialMediaApp.DataAccess.Repositories.MessageRepository;
 using SocialMediaApp.DataAccess.Repositories.ConversationRepository;
 using SocialMediaApp.DataAccess.Repositories.FriendshipRepository;
+using Microsoft.AspNetCore.SignalR;
+using SocialMediaApp.SignalR;
 
 namespace SocialMediaApp.BusinessLogic.Services.MessageService
 {
@@ -11,15 +13,18 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 		private readonly IMessageRepository _messageRepository;
 		private readonly IConversationRepository _conversationRepository;
 		private readonly IFriendshipRepository _friendshipRepository;
+		private readonly IHubContext<MessageHub> _hubContext;
 
 		public MessageService(
 			IMessageRepository messageRepository,
 			IConversationRepository conversationRepository,
-			IFriendshipRepository friendshipRepository)
+			IFriendshipRepository friendshipRepository,
+			IHubContext<MessageHub> hubContext)
 		{
 			_messageRepository = messageRepository;
 			_conversationRepository = conversationRepository;
 			_friendshipRepository = friendshipRepository;
+			_hubContext = hubContext;
 		}
 
 		public List<MessageResponseDto> GetMessagesByConversation(int conversationId, int userId)
@@ -45,26 +50,39 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 			return message.ToMessageResponseDto();
 		}
 
-		public MessageResponseDto SendMessage(MessageRequestDto messageDto)
+		public async Task<MessageResponseDto> SendMessage(MessageRequestDto messageDto)
 		{
-			//  Get conversation
+			// 1️ Get conversation
 			var conversation = _conversationRepository.GetConversation(messageDto.ConversationId);
 			if (conversation == null)
 				throw new Exception("Conversation not found.");
 
-			//  Validate sender is participant
+			// 2️ Validate sender is participant
 			if (conversation.User1Id != messageDto.SenderId && conversation.User2Id != messageDto.SenderId)
 				throw new UnauthorizedAccessException("User is not a participant in this conversation.");
 
-			// Validate friendship exists and confirmed
+			// 3️ Validate friendship exists and confirmed
 			bool areFriends = _friendshipRepository.AreUsersFriends(conversation.User1Id, conversation.User2Id);
 			if (!areFriends)
 				throw new UnauthorizedAccessException("Users are not friends. Cannot send message.");
 
-			// 4️⃣ Proceed to create message
+			// 4️ Create & persist the message
 			var messageEntity = messageDto.ToMessage();
 			var createdMessage = _messageRepository.Create(messageEntity);
-			return createdMessage.ToMessageResponseDto();
+			var createdDto = createdMessage.ToMessageResponseDto();
+
+			// 5️ Figure out the other participant’s userId
+			var receiverId = conversation.User1Id == messageDto.SenderId
+				? conversation.User2Id
+				: conversation.User1Id;
+
+			// 6️ Broadcast via SignalR
+			await _hubContext
+				.Clients
+				.User(receiverId.ToString())
+				.SendAsync("ReceiveMessage", createdDto);
+
+			return createdDto;
 		}
 
 		public void DeleteMessage(int messageId)

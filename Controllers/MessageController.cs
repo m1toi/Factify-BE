@@ -40,7 +40,7 @@ namespace SocialMediaApp.Controllers
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
-		public IActionResult SendMessage([FromBody] MessageRequestDto messageDto)
+		public async Task<IActionResult> SendMessage([FromBody] MessageRequestDto messageDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
@@ -54,8 +54,12 @@ namespace SocialMediaApp.Controllers
 
 			try
 			{
-				var createdMessage = _messageService.SendMessage(messageDto);
-				return CreatedAtAction(nameof(GetMessage), new { id = createdMessage.MessageId }, createdMessage);
+				// Await the async service method
+				var createdMessage = await _messageService.SendMessage(messageDto);
+				return CreatedAtAction(
+					nameof(GetMessage),
+					new { id = createdMessage.MessageId },
+					createdMessage);
 			}
 			catch (UnauthorizedAccessException ex)
 			{
