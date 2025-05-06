@@ -7,8 +7,8 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 		bool AreUsersFriends(int userId, int friendId);
 		FriendshipResponseDto GetFriendship(int friendshipId);
 		List<FriendshipResponseDto> GetUserFriendships(int userId);
-		FriendshipResponseDto CreateFriendship(FriendshipRequestDto friendshipDto);
-		void AcceptFriendRequest(int friendshipId);
+		Task<FriendshipResponseDto> CreateFriendship(FriendshipRequestDto friendshipDto);
+		Task<FriendshipResponseDto> AcceptFriendRequest(int friendshipId);
 		void DeleteFriendship(int friendshipId);
 	}
 }

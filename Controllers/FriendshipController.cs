@@ -34,6 +34,7 @@ namespace SocialMediaApp.Controllers
 			return Ok(areFriends);
 		}
 
+
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -59,24 +60,27 @@ namespace SocialMediaApp.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public IActionResult AcceptFriendRequest([FromRoute] int friendshipId)
+		public async Task<IActionResult> AcceptFriendRequest([FromRoute] int friendshipId)
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
 			var friendship = _friendshipService.GetFriendship(friendshipId);
-
 			if (friendship == null)
 				return NotFound("Friendship not found.");
-
 			if (friendship.FriendId != userId)
 				return Forbid("You are not authorized to accept this friend request.");
-
 			if (friendship.IsConfirmed)
 				return BadRequest("Friendship already confirmed.");
 
-			_friendshipService.AcceptFriendRequest(friendshipId);
-
-			return Ok("Friend request accepted.");
+			try
+			{
+				var updated = await _friendshipService.AcceptFriendRequest(friendshipId);
+				return Ok(updated);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
 		[HttpDelete("{friendshipId}")]

@@ -51,6 +51,11 @@ namespace SocialMediaApp.DataAccess.Repositories.UserRepository
 				throw new Exception($"User with {user.Email} already exists");
 			}
 
+			if (_context.Users.Any(u => u.Username == user.Username))
+			{
+				throw new Exception($"User with {user.Username} already exists");
+			}
+
 			var role = _context.Roles.Find(user.RoleId);
 			if (role == null)
 			{
