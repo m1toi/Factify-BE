@@ -24,6 +24,7 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				Id = user.UserId,
 				Name = user.Username,
 				Email = user.Email,
+				ProfilePicture = user.ProfilePicture,
 				Role = user.Role.Name
 			};
 		}

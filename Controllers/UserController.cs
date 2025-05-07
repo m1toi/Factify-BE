@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SocialMediaApp.BusinessLogic.Services.UserService;
@@ -8,7 +9,7 @@ using SocialMediaApp.DataAccess.Entity;
 
 namespace SocialMediaApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "User")]
 	[Route("/api/Users")]
     public class UserController : ControllerBase
     {
@@ -51,7 +52,8 @@ namespace SocialMediaApp.Controllers
 		}
 
 		[HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+		//[Authorize(Roles = "User")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public ActionResult<List<UserResponseDto>> GetAll()
         {
@@ -67,7 +69,23 @@ namespace SocialMediaApp.Controllers
             return Ok(_userService.GetById(id));
         }
 
-        [HttpPut("{id}")]        
+		[HttpGet("current")]
+		[Authorize(Roles = "User")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public ActionResult<UserResponseDto> GetCurrent()
+		{
+			var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (idClaim == null || !int.TryParse(idClaim, out var userId))
+				return Unauthorized();
+
+			var dto = _userService.GetById(userId);
+			return Ok(dto);
+		}
+
+
+		[HttpPut("{id}")]        
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
