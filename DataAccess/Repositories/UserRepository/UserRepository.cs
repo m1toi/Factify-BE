@@ -84,6 +84,10 @@ namespace SocialMediaApp.DataAccess.Repositories.UserRepository
 			{
 				throw new Exception($"User with {updatedUser.Email} already exists");
 			}
+			if (_context.Users.Any(u => u.Username == updatedUser.Username && u.UserId != id))
+			{
+				throw new Exception($"Username '{updatedUser.Username}' is already taken");
+			}
 
 			userToUpdate.Username = updatedUser.Username;
 			userToUpdate.Email = updatedUser.Email;

@@ -10,6 +10,7 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
 		List<UserResponseDto> GetAll();
         UserResponseDto GetById(int id);
         void Update(int id, UserRequestDto updatedUserDto);
-        void Delete(int id);
+        void UpdateProfile(int userId, UpdateProfileDto dto);
+		void Delete(int id);
     }
 }

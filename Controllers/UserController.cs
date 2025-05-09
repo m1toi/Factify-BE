@@ -101,7 +101,35 @@ namespace SocialMediaApp.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+		[Authorize]                   
+		[HttpPut("profile")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public IActionResult UpdateProfile([FromBody] UpdateProfileDto dto)
+		{
+			var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (!int.TryParse(idClaim, out var userId))
+				return Unauthorized();
+
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			try
+			{
+				_userService.UpdateProfile(userId, dto);
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				// you could inspect ex.Message or better yet throw a custom DuplicateUsernameException
+				if (ex.Message.Contains("already taken"))
+					return Conflict(new { error = ex.Message });
+				throw;
+			}
+		}
+
+		[HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]

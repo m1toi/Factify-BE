@@ -57,7 +57,17 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
             _userRepository.Update(id, updatedUser);
         }
 
-        public void Delete(int id)
+		public void UpdateProfile(int userId, UpdateProfileDto dto)
+		{
+			var user = _userRepository.Get(userId);
+
+			user.Username = dto.Name;
+			user.ProfilePicture = dto.ProfilePicture;
+
+			_userRepository.Update(userId, user);
+		}
+
+		public void Delete(int id)
         {
             _userRepository.Delete(id);
         }
