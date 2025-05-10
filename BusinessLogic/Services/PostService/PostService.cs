@@ -22,7 +22,13 @@ namespace SocialMediaApp.BusinessLogic.Services.PostService
 			return createdPost.ToPostResponseDto();
 		}
 
-        public void Delete(int id)
+		public List<PostResponseDto> GetByUser(int userId)
+		{
+			var posts = _postRepository.GetByUser(userId);
+			return posts.ToListPostResponseDto();
+		}
+
+		public void Delete(int id)
         {
             _postRepository.Delete(id);
         }

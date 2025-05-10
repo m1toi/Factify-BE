@@ -30,6 +30,17 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 
 			return post;
 		}
+
+		public List<Post> GetByUser(int userId)
+		{
+			return _context.Posts
+				.Where(p => p.UserId == userId)
+				.Include(p => p.User)
+				.Include(p => p.Category)
+				.OrderByDescending(p => p.CreatedAt)
+				.ToList();
+		}
+
 		public Post Create(Post post)
 		{
 			if (!_context.Users.Any(u => u.UserId == post.UserId))

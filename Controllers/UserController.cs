@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SocialMediaApp.BusinessLogic.Services.PostService;
 using SocialMediaApp.BusinessLogic.Services.UserService;
 using SocialMediaApp.DataAccess.Dtos.LoginDto;
+using SocialMediaApp.DataAccess.Dtos.PostDto;
 using SocialMediaApp.DataAccess.Dtos.UserDto;
 using SocialMediaApp.DataAccess.Entity;
+using SocialMediaApp.DataAccess.Repositories.UserRepository;
 
 namespace SocialMediaApp.Controllers
 {
@@ -14,11 +17,13 @@ namespace SocialMediaApp.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+		private readonly IPostService _postService;
 
-        public UserController(IUserService userService)
+		public UserController(IUserService userService, IPostService postService)
         {
             _userService = userService;
-        }
+			_postService = postService;
+		}
 
         [AllowAnonymous]
 		[HttpPost("register")]
@@ -83,7 +88,16 @@ namespace SocialMediaApp.Controllers
 			var dto = _userService.GetById(userId);
 			return Ok(dto);
 		}
-
+			
+		[HttpGet("{id}/posts")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public ActionResult<List<PostResponseDto>> GetPostsByUser([FromRoute] int id)
+		{
+			// opțional: poți verifica că user-ul există, altfel return NotFound().
+			var posts = _postService.GetByUser(id);
+			return Ok(posts);
+		}
 
 		[HttpPut("{id}")]        
         [ProducesResponseType(StatusCodes.Status204NoContent)]
