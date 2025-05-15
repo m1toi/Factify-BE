@@ -22,9 +22,9 @@ namespace SocialMediaApp.BusinessLogic.Services.PostService
 			return createdPost.ToPostResponseDto();
 		}
 
-		public List<PostResponseDto> GetByUser(int userId)
+		public List<PostResponseDto> GetByUser(int userId, int page, int pageSize)
 		{
-			var posts = _postRepository.GetByUser(userId);
+			var posts = _postRepository.GetByUser(userId, page, pageSize);
 			return posts.ToListPostResponseDto();
 		}
 

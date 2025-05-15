@@ -31,15 +31,18 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 			return post;
 		}
 
-		public List<Post> GetByUser(int userId)
+		public List<Post> GetByUser(int userId, int page, int pageSize)
 		{
 			return _context.Posts
 				.Where(p => p.UserId == userId)
+				.OrderByDescending(p => p.CreatedAt)
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize)                
 				.Include(p => p.User)
 				.Include(p => p.Category)
-				.OrderByDescending(p => p.CreatedAt)
 				.ToList();
 		}
+
 
 		public Post Create(Post post)
 		{

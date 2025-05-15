@@ -88,16 +88,21 @@ namespace SocialMediaApp.Controllers
 			var dto = _userService.GetById(userId);
 			return Ok(dto);
 		}
-			
+
 		[HttpGet("{id}/posts")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public ActionResult<List<PostResponseDto>> GetPostsByUser([FromRoute] int id)
+		public ActionResult<List<PostResponseDto>> GetPostsByUser(
+			[FromRoute] int id,
+			[FromQuery] int page = 1,
+			[FromQuery] int pageSize = 10  
+		)
 		{
-			// opțional: poți verifica că user-ul există, altfel return NotFound().
-			var posts = _postService.GetByUser(id);
+			// 1) Poți verifica existența user-ului și returna NotFound dacă lipsește.
+			var posts = _postService.GetByUser(id, page, pageSize);
 			return Ok(posts);
 		}
+
 
 		[HttpPut("{id}")]        
         [ProducesResponseType(StatusCodes.Status204NoContent)]
