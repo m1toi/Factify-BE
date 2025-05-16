@@ -31,6 +31,16 @@ namespace SocialMediaApp.DataAccess.Repositories.UserRepository
 			return user;
 		}
 
+		public List<User> SearchByUsername(string query, int excludeUserId = 0)
+		{
+			return _context.Users
+				.Where(u => EF.Functions.Like(u.Username.ToLower(), $"%{query.ToLower()}%") &&
+							u.UserId != excludeUserId)
+				.OrderBy(u => u.Username)
+				.Take(10)
+				.ToList();
+		}
+
 		public User Get(int id)
 		{
 			var user = _context.Users

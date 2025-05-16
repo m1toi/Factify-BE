@@ -103,6 +103,19 @@ namespace SocialMediaApp.Controllers
 			return Ok(posts);
 		}
 
+		[HttpGet("search")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		public ActionResult<List<UserSearchResultDto>> SearchByUsername([FromQuery] string query)
+		{
+			var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			if (!int.TryParse(idClaim, out var currentUserId))
+				return Unauthorized();
+
+			var results = _userService.SearchByUsername(query, currentUserId);
+			return Ok(results);
+		}
+
 
 		[HttpPut("{id}")]        
         [ProducesResponseType(StatusCodes.Status204NoContent)]

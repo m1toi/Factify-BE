@@ -8,7 +8,8 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
         void Register(UserRequestDto userDto);
 		string Login(LoginRequestDto loginDto);
 		List<UserResponseDto> GetAll();
-        UserResponseDto GetById(int id);
+		List<UserSearchResultDto> SearchByUsername(string query, int currentUserId);
+		UserResponseDto GetById(int id);
         void Update(int id, UserRequestDto updatedUserDto);
         void UpdateProfile(int userId, UpdateProfileDto dto);
 		void Delete(int id);

@@ -49,7 +49,23 @@ namespace SocialMediaApp.BusinessLogic.Services.UserService
             var userResponseDto = user.ToUserResponseDto();
             return userResponseDto;
         }
-        public void Update(int id, UserRequestDto updatedUserDto)
+
+		public List<UserSearchResultDto> SearchByUsername(string query, int currentUserId)
+		{
+			if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
+				return new List<UserSearchResultDto>();
+
+			var users = _userRepository.SearchByUsername(query, currentUserId);
+
+			return users.Select(u => new UserSearchResultDto
+			{
+				UserId = u.UserId,
+				Username = u.Username,
+				ProfilePicture = u.ProfilePicture
+			}).ToList();
+		}
+
+		public void Update(int id, UserRequestDto updatedUserDto)
         {
             string passwordHash = BCrypt.Net.BCrypt.HashPassword(updatedUserDto.Password);
             updatedUserDto.Password = passwordHash;
