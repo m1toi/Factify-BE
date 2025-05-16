@@ -16,7 +16,9 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				CreatedAt = post.CreatedAt,
 				UserName = post.User.Username,
 				CategoryName = post.Category.Name,
-				UserId = post.UserId
+				UserId = post.UserId,
+				LikesCount = post.Interactions?.Count(i => i.Liked) ?? 0,
+				SharesCount = post.Interactions?.Count(i => i.Shared) ?? 0,
 			};
 			return postResponseDto;
 		}

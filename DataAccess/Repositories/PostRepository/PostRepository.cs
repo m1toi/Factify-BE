@@ -40,6 +40,7 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 				.Take(pageSize)                
 				.Include(p => p.User)
 				.Include(p => p.Category)
+				.Include(p => p.Interactions)
 				.ToList();
 		}
 
@@ -116,6 +117,7 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 					.Where(p => categoryIds.Contains(p.CategoryId) && !seenPostIds.Contains(p.PostId))
 					.Include(p => p.User)
 					.Include(p => p.Category)
+					.Include(p => p.Interactions)
 					.OrderByDescending(p => p.CreatedAt)
 					.Take(totalPosts)
 					.ToList();
