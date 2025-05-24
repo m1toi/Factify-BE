@@ -43,6 +43,27 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 			return messages.ToListMessageResponseDto();
 		}
 
+		public List<MessageResponseDto> GetMessagesByConversationPaged(
+		int conversationId,
+		int userId,
+		int? beforeMessageId,
+		int limit)
+		{
+			// 1️⃣ Validări identice cu GetMessagesByConversation:
+			var conversation = _conversationRepository.GetConversation(conversationId);
+			if (conversation == null)
+				throw new Exception("Conversation not found.");
+
+			if (conversation.User1Id != userId && conversation.User2Id != userId)
+				throw new UnauthorizedAccessException("You are not a participant in this conversation.");
+
+			// 2️⃣ Fetch paginat
+			var messages = _messageRepository
+				.GetMessagesByConversationPaged(conversationId, beforeMessageId, limit);
+
+			// 3️⃣ Map la DTO-uri
+			return messages.ToListMessageResponseDto();
+		}
 
 		public MessageResponseDto GetMessage(int messageId)
 		{
@@ -60,6 +81,10 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 			// 2️ Validate sender is participant
 			if (conversation.User1Id != messageDto.SenderId && conversation.User2Id != messageDto.SenderId)
 				throw new UnauthorizedAccessException("User is not a participant in this conversation.");
+
+			if (string.IsNullOrWhiteSpace(messageDto.Content) && !messageDto.PostId.HasValue)
+				throw new ArgumentException("Trebuie să aveți fie un mesaj text, fie un post de trimis.");
+
 
 			// 3️ Validate friendship exists and confirmed
 			bool areFriends = _friendshipRepository.AreUsersFriends(conversation.User1Id, conversation.User2Id);

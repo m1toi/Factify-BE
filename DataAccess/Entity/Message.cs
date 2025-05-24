@@ -10,7 +10,7 @@
 		public int SenderId { get; set; }
 		public User Sender { get; set; }
 
-		public string Content { get; set; }
+		public string? Content { get; set; }
 
 		public int? PostId { get; set; }  // Nullable: message might or might not contain a post
 		public Post Post { get; set; }

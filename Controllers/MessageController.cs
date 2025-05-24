@@ -20,10 +20,17 @@ namespace SocialMediaApp.Controllers
 		[HttpGet("conversation/{conversationId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public ActionResult<List<MessageResponseDto>> GetMessagesByConversation([FromRoute] int conversationId)
+		public ActionResult<List<MessageResponseDto>> GetMessagesByConversation(
+			[FromRoute] int conversationId,
+			[FromQuery] int? beforeMessageId,        // ID-ul primului mesaj deja încărcat
+			[FromQuery] int limit = 20)             // câte mesaje să ia pe pagină
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-			var messages = _messageService.GetMessagesByConversation(conversationId, userId);
+
+			// Folosim noua metodă paginată
+			var messages = _messageService
+				.GetMessagesByConversationPaged(conversationId, userId, beforeMessageId, limit);
+
 			return Ok(messages);
 		}
 
