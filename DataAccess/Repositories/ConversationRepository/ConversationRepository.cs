@@ -46,6 +46,8 @@ namespace SocialMediaApp.DataAccess.Repositories.ConversationRepository
 		{
 			return _context.Conversations
 				.Where(c => c.User1Id == userId || c.User2Id == userId)
+				.Include(c => c.User1)
+				.Include(c => c.User2)
 				.ToList();
 		}
 	}

@@ -24,8 +24,10 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				ConversationId = conversation.ConversationId,
 				User1Id = conversation.User1Id,
 				User1Username = conversation.User1?.Username,
+				User1ProfilePicture = conversation.User1?.ProfilePicture,
 				User2Id = conversation.User2Id,
 				User2Username = conversation.User2?.Username,
+				User2ProfilePicture = conversation.User2?.ProfilePicture,
 				CreatedAt = conversation.CreatedAt
 			};
 		}

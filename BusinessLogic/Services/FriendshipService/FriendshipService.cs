@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using SocialMediaApp.BusinessLogic.Mapping;
 using SocialMediaApp.DataAccess.Dtos.FriendshipDto;
+using SocialMediaApp.DataAccess.Entity;
+using SocialMediaApp.DataAccess.Repositories.ConversationRepository;
 using SocialMediaApp.DataAccess.Repositories.FriendshipRepository;
 using SocialMediaApp.SignalR;
 
@@ -9,13 +11,16 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 	public class FriendshipService : IFriendshipService
 	{
 		private readonly IFriendshipRepository _friendshipRepository;
+		private readonly IConversationRepository _conversationRepository;
 		private readonly IHubContext<FriendshipHub> _hubContext;
 
 		public FriendshipService(IFriendshipRepository friendshipRepository,
-			IHubContext<FriendshipHub> hubContext)
+			IHubContext<FriendshipHub> hubContext,
+			IConversationRepository conversationRepository)
 		{
 			_friendshipRepository = friendshipRepository;
 			_hubContext = hubContext;
+			_conversationRepository = conversationRepository;
 		}
 
 		public bool AreUsersFriends(int userId, int friendId)
@@ -62,10 +67,19 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 			entity.IsConfirmed = true;
 			_friendshipRepository.UpdateFriendship(entity);
 
-			// 3️⃣ map to DTO
+			// 3️⃣ create conversation automatically
+			var conversation = new Conversation
+			{
+				User1Id = entity.UserId,
+				User2Id = entity.FriendId,
+				CreatedAt = DateTime.UtcNow
+			};
+			_conversationRepository.Create(conversation);
+
+			// 4️⃣ map to DTO
 			var dto = entity.ToFriendshipResponseDto();
 
-			// 4️⃣ broadcast to the original sender (UserId)
+			// 5️⃣ broadcast la cel care a trimis cererea
 			await _hubContext.Clients
 				.User(entity.UserId.ToString())
 				.SendAsync("FriendRequestAccepted", dto);

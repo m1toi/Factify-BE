@@ -14,6 +14,9 @@ namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 				.Where(m => m.ConversationId == conversationId)
 				.Include(m => m.Sender)
 				.Include(m => m.Post)
+					.ThenInclude(p => p.User)
+				.Include(m => m.Post)
+					.ThenInclude(p => p.Category)
 				.OrderBy(m => m.SentAt)
 				.ToList();
 		}

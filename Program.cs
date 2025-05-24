@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SocialMediaApp.BusinessLogic.Extensions; // Your extension methods
@@ -73,6 +73,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			//ValidAudience = config["JWT:Audience"], // Use in production
 			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:SecurityKey"]))
 		};
+		options.Events = new JwtBearerEvents
+		{
+			OnMessageReceived = context =>
+			{
+				// dacă e negociere pentru SignalR (websocket)
+				var accessToken = context.Request.Query["access_token"];
+				var path = context.HttpContext.Request.Path;
+				if (!string.IsNullOrEmpty(accessToken) &&
+					(path.StartsWithSegments("/hubs/message")))
+				{
+					context.Token = accessToken;
+				}
+				return Task.CompletedTask;
+			}
+		};
 	});
 
 // CORS (Cross-Origin Resource Sharing - Important if your frontend is on a different domain/port)
@@ -83,7 +98,8 @@ builder.Services.AddCors(options =>
 		{
 			builder.WithOrigins("http://localhost:4200") // Replace with your frontend's URL
 				   .AllowAnyHeader()
-				   .AllowAnyMethod();
+				   .AllowAnyMethod()
+				   .AllowCredentials(); // Allow credentials if needed 
 		});
 });
 
