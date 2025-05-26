@@ -36,6 +36,7 @@ namespace SocialMediaApp.DataAccess.Repositories.ConversationRepository
 			{
 				throw new Exception("Conversation between these users already exists.");
 			}
+			conversation.CreatedAt = DateTimeOffset.UtcNow;
 
 			_context.Conversations.Add(conversation);
 			_context.SaveChanges();
