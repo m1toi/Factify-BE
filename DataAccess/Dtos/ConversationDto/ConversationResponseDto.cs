@@ -9,6 +9,6 @@
 		public int User2Id { get; set; }
 		public string User2Username { get; set; }
 		public string? User2ProfilePicture { get; set; }
-		public DateTime CreatedAt { get; set; }
+		public DateTimeOffset CreatedAt { get; set; }
 	}
 }

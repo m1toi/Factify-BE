@@ -15,7 +15,7 @@
 		public int? PostId { get; set; }  // Nullable: message might or might not contain a post
 		public Post Post { get; set; }
 
-		public DateTime SentAt { get; set; }
+		public DateTimeOffset SentAt { get; set; }
 
 		public bool IsRead { get; set; }
 	}

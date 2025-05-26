@@ -69,7 +69,7 @@ namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 			if (message.PostId.HasValue && !_context.Posts.Any(p => p.PostId == message.PostId.Value))
 				throw new ArgumentException("Invalid Post ID.");
 
-			message.SentAt = DateTime.UtcNow;
+			message.SentAt = DateTimeOffset.UtcNow;
 
 			_context.Messages.Add(message);
 			_context.SaveChanges();

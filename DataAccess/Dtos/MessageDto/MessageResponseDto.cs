@@ -12,6 +12,6 @@ namespace SocialMediaApp.DataAccess.Dtos.MessageDto
 		public string Content { get; set; }
 		public int? PostId { get; set; }
 		public PostResponseDto? Post { get; set; }
-		public DateTime SentAt { get; set; }
+		public DateTimeOffset SentAt { get; set; }
 	}
 }

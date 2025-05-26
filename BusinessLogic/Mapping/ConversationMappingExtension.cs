@@ -13,7 +13,7 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 			{
 				User1Id = dto.User1Id,
 				User2Id = dto.User2Id,
-				CreatedAt = DateTime.UtcNow
+				CreatedAt = DateTimeOffset.UtcNow
 			};
 		}
 
