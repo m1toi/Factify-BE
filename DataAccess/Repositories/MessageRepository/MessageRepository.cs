@@ -37,6 +37,7 @@ namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 				.Include(m => m.Sender)
 				.Include(m => m.Post).ThenInclude(p => p.User)
 				.Include(m => m.Post).ThenInclude(p => p.Category)
+				.Include(m => m.Post).ThenInclude(p => p.Interactions)
 				.OrderByDescending(m => m.MessageId)
 				.Take(limit)
 				.OrderBy(m => m.MessageId)
