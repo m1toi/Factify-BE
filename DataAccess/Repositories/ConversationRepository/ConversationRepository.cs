@@ -52,6 +52,7 @@ namespace SocialMediaApp.DataAccess.Repositories.ConversationRepository
 				.Where(c => c.User1Id == userId || c.User2Id == userId)
 				.Include(c => c.User1)
 				.Include(c => c.User2)
+				.Include(c => c.Messages)
 				.ToList();
 		}
 	}

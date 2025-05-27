@@ -19,6 +19,9 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 
 		public static ConversationResponseDto ToConversationResponseDto(this Conversation conversation)
 		{
+			var last = conversation.Messages?
+				.OrderByDescending(m => m.SentAt)
+				.FirstOrDefault();
 			return new ConversationResponseDto
 			{
 				ConversationId = conversation.ConversationId,
@@ -28,7 +31,10 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				User2Id = conversation.User2Id,
 				User2Username = conversation.User2?.Username,
 				User2ProfilePicture = conversation.User2?.ProfilePicture,
-				CreatedAt = conversation.CreatedAt
+				CreatedAt = conversation.CreatedAt,
+				LastMessage = last?.Content,
+				LastMessageSenderId = last?.SenderId,
+				LastMessageSentAt = last?.SentAt
 			};
 		}
 
