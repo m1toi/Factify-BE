@@ -5,6 +5,7 @@ using SocialMediaApp.DataAccess.Repositories.ConversationRepository;
 using SocialMediaApp.DataAccess.Repositories.FriendshipRepository;
 using Microsoft.AspNetCore.SignalR;
 using SocialMediaApp.SignalR;
+using SocialMediaApp.DataAccess.Dtos.ConversationDto;
 
 namespace SocialMediaApp.BusinessLogic.Services.MessageService
 {
@@ -106,6 +107,20 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 				.Clients
 				.User(receiverId.ToString())
 				.SendAsync("ReceiveMessage", createdDto);
+
+			var convUpdate = new ConversationUpdatedDto
+			{
+				ConversationId = messageDto.ConversationId,
+				LastMessage = createdDto.Content ?? string.Empty,
+				LastMessageSenderId = createdDto.SenderId,
+				LastMessageSentAt = createdDto.SentAt
+			};
+
+			// Trimitem la amândoi participanții (expeditor + destinatar)
+			await _hubContext
+				.Clients
+				.Users(new[] { messageDto.SenderId.ToString(), receiverId.ToString() })
+				.SendAsync("ConversationUpdated", convUpdate);
 
 			return createdDto;
 		}
