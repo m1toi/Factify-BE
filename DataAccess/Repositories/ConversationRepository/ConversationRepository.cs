@@ -12,6 +12,9 @@ namespace SocialMediaApp.DataAccess.Repositories.ConversationRepository
 		{
 			var conversation = _context.Conversations
 				.Include(c => c.Messages)
+				.Include(c => c.User1)
+				.Include(c => c.User2)
+				.Include(c => c.Messages)
 				.FirstOrDefault(c => c.ConversationId == conversationId);
 
 			if (conversation == null)

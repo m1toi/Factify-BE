@@ -36,5 +36,24 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 		{
 			return conversations.Select(c => c.ToConversationResponseDto()).ToList();
 		}
+
+		public static List<ParticipantDto> ToParticipantDtos(this Conversation conv)
+		{
+			return new List<ParticipantDto>
+		{
+			new ParticipantDto
+			{
+				UserId = conv.User1Id,
+				Username = conv.User1.Username,
+				ProfilePicture = conv.User1.ProfilePicture
+			},
+			new ParticipantDto
+			{
+				UserId = conv.User2Id,
+				Username = conv.User2.Username,
+				ProfilePicture = conv.User2.ProfilePicture
+			}
+		};
+		}
 	}
 }

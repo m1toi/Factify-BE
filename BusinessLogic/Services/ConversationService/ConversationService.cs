@@ -12,6 +12,11 @@ namespace SocialMediaApp.BusinessLogic.Services.ConversationService
 		{
 			_conversationRepository = conversationRepository;
 		}
+		public List<ParticipantDto> GetConversationParticipants(int conversationId)
+		{
+			var conv = _conversationRepository.GetConversation(conversationId);
+			return conv.ToParticipantDtos();
+		}
 
 		public ConversationResponseDto GetConversation(int conversationId)
 		{

@@ -26,6 +26,22 @@ namespace SocialMediaApp.Controllers
 			return Ok(conversation);
 		}
 
+		[HttpGet("{id}/participants")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public ActionResult<List<ParticipantDto>> GetParticipants([FromRoute] int id)
+		{
+			try
+			{
+				var participants = _conversationService.GetConversationParticipants(id);
+				return Ok(participants);
+			}
+			catch (Exception ex)
+			{
+				return NotFound(ex.Message);
+			}
+		}
+
 		[HttpGet("between/{userId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
