@@ -108,12 +108,15 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 				.User(receiverId.ToString())
 				.SendAsync("ReceiveMessage", createdDto);
 
+			var receiverUnread = _messageRepository.CountUnread(messageDto.ConversationId,receiverId);
 			var convUpdate = new ConversationUpdatedDto
 			{
 				ConversationId = messageDto.ConversationId,
 				LastMessage = createdDto.Content ?? string.Empty,
 				LastMessageSenderId = createdDto.SenderId,
-				LastMessageSentAt = createdDto.SentAt
+				LastMessageSentAt = createdDto.SentAt,
+				UnreadCount = receiverUnread,
+				HasUnread = receiverUnread > 0,
 			};
 
 			// Trimitem la amândoi participanții (expeditor + destinatar)

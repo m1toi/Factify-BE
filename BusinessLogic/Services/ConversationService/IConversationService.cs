@@ -9,6 +9,6 @@ namespace SocialMediaApp.BusinessLogic.Services.ConversationService
 		ConversationResponseDto GetConversationBetweenUsers(int user1Id, int user2Id, int currentUserId);
 		ConversationResponseDto CreateConversation(ConversationRequestDto conversationDto, int currentUserId);
 		List<ConversationResponseDto> GetUserConversations(int userId);
-		void MarkConversationAsRead(int conversationId, int userId);
+	    Task MarkConversationAsReadAsync(int conversationId, int userId);
 	}
 }

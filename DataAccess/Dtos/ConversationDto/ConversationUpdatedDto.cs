@@ -6,5 +6,7 @@
 		public string LastMessage { get; set; } = null!;
 		public int LastMessageSenderId { get; set; }
 		public DateTimeOffset LastMessageSentAt { get; set; }
+		public int UnreadCount { get; set; }
+		public bool HasUnread { get; set; }
 	}
 }

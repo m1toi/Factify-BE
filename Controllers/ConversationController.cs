@@ -85,13 +85,13 @@ namespace SocialMediaApp.Controllers
 		[HttpPost("{id}/mark-read")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
-		public IActionResult MarkRead([FromRoute] int id)
+		public async Task<IActionResult> MarkRead([FromRoute] int id)
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
 			try
 			{
-				_conversationService.MarkConversationAsRead(id, userId);
+				// ▶ apel asincron în service
+				await _conversationService.MarkConversationAsReadAsync(id, userId);
 				return Ok();
 			}
 			catch (UnauthorizedAccessException)

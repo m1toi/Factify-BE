@@ -1,4 +1,5 @@
-﻿using SocialMediaApp.DataAccess.Entity;
+﻿using System;
+using SocialMediaApp.DataAccess.Entity;
 
 namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 {
@@ -10,5 +11,6 @@ namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 		Message Create(Message message);
 		void Delete(int messageId);
 		void MarkMessagesAsRead(int conversationId, int userId);
+		int CountUnread(int conversationId, int userId);
 	}
 }

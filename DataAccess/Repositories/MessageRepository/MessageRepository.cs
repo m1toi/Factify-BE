@@ -108,5 +108,12 @@ namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 			toMark.ForEach(m => m.IsRead = true);
 			_context.SaveChanges();
 		}
+		public int CountUnread(int conversationId, int userId)
+		{
+			return _context.Messages
+			  .Count(m => m.ConversationId == conversationId
+					   && m.SenderId != userId
+					   && !m.IsRead);
+		}
 	}
 }
