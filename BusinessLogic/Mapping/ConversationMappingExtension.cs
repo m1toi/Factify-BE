@@ -17,11 +17,16 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 			};
 		}
 
-		public static ConversationResponseDto ToConversationResponseDto(this Conversation conversation)
+		public static ConversationResponseDto ToConversationResponseDto(this Conversation conversation, int currentUserId)
 		{
 			var last = conversation.Messages?
 				.OrderByDescending(m => m.SentAt)
 				.FirstOrDefault();
+
+			var unreadCount = conversation.Messages == null
+				? 0 
+				: conversation.Messages
+					.Count(m => !m.IsRead && m.SenderId != currentUserId);
 			return new ConversationResponseDto
 			{
 				ConversationId = conversation.ConversationId,
@@ -34,13 +39,15 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				CreatedAt = conversation.CreatedAt,
 				LastMessage = last?.Content,
 				LastMessageSenderId = last?.SenderId,
-				LastMessageSentAt = last?.SentAt
+				LastMessageSentAt = last?.SentAt,
+				UnreadCount = unreadCount,
+				HasUnread = unreadCount > 0
 			};
 		}
 
-		public static List<ConversationResponseDto> ToListConversationResponseDto(this List<Conversation> conversations)
+		public static List<ConversationResponseDto> ToListConversationResponseDto(this List<Conversation> conversations, int currentUserId)
 		{
-			return conversations.Select(c => c.ToConversationResponseDto()).ToList();
+			return conversations.Select(c => c.ToConversationResponseDto(currentUserId)).ToList();
 		}
 
 		public static List<ParticipantDto> ToParticipantDtos(this Conversation conv)

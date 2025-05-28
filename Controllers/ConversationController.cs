@@ -22,7 +22,8 @@ namespace SocialMediaApp.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public ActionResult<ConversationResponseDto> GetById([FromRoute] int id)
 		{
-			var conversation = _conversationService.GetConversation(id);
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+			var conversation = _conversationService.GetConversation(id, userId);
 			return Ok(conversation);
 		}
 
@@ -42,16 +43,13 @@ namespace SocialMediaApp.Controllers
 			}
 		}
 
-		[HttpGet("between/{userId}")]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public ActionResult<ConversationResponseDto> GetBetweenUsers([FromRoute] int userId)
+		[HttpGet("between/{otherUserId}")]
+		public ActionResult<ConversationResponseDto> GetBetweenUsers(int otherUserId)
 		{
-			var myUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-			var conversation = _conversationService.GetConversationBetweenUsers(myUserId, userId);
-			if (conversation == null)
-				return NotFound("No conversation found.");
-			return Ok(conversation);
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+			var dto = _conversationService.GetConversationBetweenUsers(userId, otherUserId, userId);
+			if (dto == null) return NotFound();
+			return Ok(dto);
 		}
 
 		[HttpPost]
@@ -66,7 +64,7 @@ namespace SocialMediaApp.Controllers
 
 			try
 			{
-				var createdConversation = _conversationService.CreateConversation(conversationDto);
+				var createdConversation = _conversationService.CreateConversation(conversationDto, userId);
 				return CreatedAtAction(nameof(GetById), new { id = createdConversation.ConversationId }, createdConversation);
 			}
 			catch (Exception ex)
@@ -82,6 +80,24 @@ namespace SocialMediaApp.Controllers
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 			var conversations = _conversationService.GetUserConversations(userId);
 			return Ok(conversations);
+		}
+
+		[HttpPost("{id}/mark-read")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		public IActionResult MarkRead([FromRoute] int id)
+		{
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+			try
+			{
+				_conversationService.MarkConversationAsRead(id, userId);
+				return Ok();
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return Forbid();
+			}
 		}
 	}
 }

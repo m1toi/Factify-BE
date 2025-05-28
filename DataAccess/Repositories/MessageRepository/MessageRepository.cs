@@ -93,5 +93,20 @@ namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 			_context.Messages.Remove(message);
 			_context.SaveChanges();
 		}
+		public void MarkMessagesAsRead(int conversationId, int userId)
+		{
+			var toMark = _context.Messages
+				.Where(m =>
+					m.ConversationId == conversationId &&
+					m.SenderId != userId &&
+					!m.IsRead
+				)
+				.ToList();
+
+			if (toMark.Count == 0) return;
+
+			toMark.ForEach(m => m.IsRead = true);
+			_context.SaveChanges();
+		}
 	}
 }

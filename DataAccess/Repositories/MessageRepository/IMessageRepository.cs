@@ -9,5 +9,6 @@ namespace SocialMediaApp.DataAccess.Repositories.MessageRepository
 		Message GetMessage(int messageId);
 		Message Create(Message message);
 		void Delete(int messageId);
+		void MarkMessagesAsRead(int conversationId, int userId);
 	}
 }
