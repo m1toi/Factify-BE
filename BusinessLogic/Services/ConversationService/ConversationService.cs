@@ -58,44 +58,30 @@ namespace SocialMediaApp.BusinessLogic.Services.ConversationService
 
 		public async Task MarkConversationAsReadAsync(int conversationId, int userId)
 		{
-			// 1) validare
 			var conv = _conversationRepository.GetConversation(conversationId);
 			if (conv.User1Id != userId && conv.User2Id != userId)
 				throw new UnauthorizedAccessException();
 
-			// 2) marcare în baza de date
+			// marchează în BD
 			_messageRepository.MarkMessagesAsRead(conversationId, userId);
 
-			// 3) recalculează necititele după marcare
+			// recalculează necititele
 			var unread = _messageRepository.CountUnread(conversationId, userId);
 
-			// 4) construiește DTO-ul de actualizare
-			var update = new ConversationUpdatedDto
+			// construiește DTO‐ul de read
+			var readDto = new ConversationReadDto
 			{
 				ConversationId = conversationId,
-				// Păstrează valorile vechi de preview:
-				LastMessage = conv.Messages
-										 .OrderByDescending(m => m.SentAt)
-										 .FirstOrDefault()
-									   ?.Content ?? string.Empty,
-				LastMessageSenderId = conv.Messages
-										 .OrderByDescending(m => m.SentAt)
-										 .FirstOrDefault()
-									   ?.SenderId ?? 0,
-				LastMessageSentAt = conv.Messages
-										 .OrderByDescending(m => m.SentAt)
-										 .FirstOrDefault()
-									   ?.SentAt ?? conv.CreatedAt,
-
 				UnreadCount = unread,
 				HasUnread = unread > 0
 			};
 
-			// 5) trimite broadcast la ambele părți
-			//await _hubContext
-			//  .Clients
-			//  .Users(new[] { conv.User1Id.ToString(), conv.User2Id.ToString() })
-			//  .SendAsync("ConversationUpdated", update);
+			// trimite doar acest eveniment
+			await _hubContext
+			  .Clients
+			  .User(userId.ToString())   // numai la cel care chiar a deschis conversația
+			  .SendAsync("ConversationRead", readDto);
 		}
+
 	}
 }
