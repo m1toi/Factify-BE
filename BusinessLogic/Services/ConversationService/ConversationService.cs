@@ -92,10 +92,10 @@ namespace SocialMediaApp.BusinessLogic.Services.ConversationService
 			};
 
 			// 5) trimite broadcast la ambele părți
-			await _hubContext
-			  .Clients
-			  .Users(new[] { conv.User1Id.ToString(), conv.User2Id.ToString() })
-			  .SendAsync("ConversationUpdated", update);
+			//await _hubContext
+			//  .Clients
+			//  .Users(new[] { conv.User1Id.ToString(), conv.User2Id.ToString() })
+			//  .SendAsync("ConversationUpdated", update);
 		}
 	}
 }

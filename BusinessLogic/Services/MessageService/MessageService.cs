@@ -90,7 +90,7 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 			// 3️ Validate friendship exists and confirmed
 			bool areFriends = _friendshipRepository.AreUsersFriends(conversation.User1Id, conversation.User2Id);
 			if (!areFriends)
-				throw new UnauthorizedAccessException("Users are not friends. Cannot send message.");
+				throw new UnauthorizedAccessException("You are no longer friends with this user. Cannot send message.");
 
 			// 4️ Create & persist the message
 			var messageEntity = messageDto.ToMessage();
