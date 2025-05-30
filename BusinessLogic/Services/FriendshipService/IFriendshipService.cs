@@ -10,5 +10,6 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 		Task<FriendshipResponseDto> CreateFriendship(FriendshipRequestDto friendshipDto);
 		Task<FriendshipResponseDto> AcceptFriendRequest(int friendshipId);
 		void DeleteFriendship(int friendshipId);
+		List<FriendForShareDto> GetFriendsForShare(int currentUserId);
 	}
 }

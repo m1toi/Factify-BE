@@ -92,5 +92,55 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 		{
 			_friendshipRepository.DeleteFriendship(friendshipId);
 		}
+
+		public List<FriendForShareDto> GetFriendsForShare(int currentUserId)
+		{
+			// 1️⃣ Preia toate conversațiile userului
+			var conversations = _conversationRepository.GetUserConversations(currentUserId);
+
+			// 2️⃣ Obține userId-urile prietenilor confirmați
+			var confirmedFriends = _friendshipRepository
+				.GetUserFriendships(currentUserId)
+				.Where(f => f.IsConfirmed)
+				.Select(f =>
+					f.UserId == currentUserId
+						? f.FriendId
+						: f.UserId
+				)
+				.ToHashSet();
+
+			// 3️⃣ Filtrăm conversațiile care includ doar prieteni confirmați
+			var result = conversations
+				.Where(conv =>
+				{
+					var otherUserId = conv.User1Id == currentUserId
+						? conv.User2Id
+						: conv.User1Id;
+					return confirmedFriends.Contains(otherUserId);
+				})
+				.Select(conv =>
+				{
+					var friendUser = conv.User1Id == currentUserId
+						? conv.User2
+						: conv.User1;
+
+					var lastChat = conv.Messages != null && conv.Messages.Any()
+						? conv.Messages.Max(m => m.SentAt)
+						: conv.CreatedAt;
+
+					return new FriendForShareDto
+					{
+						UserId = friendUser.UserId,
+						Username = friendUser.Username,
+						ProfilePicture = friendUser.ProfilePicture,
+						LastChatAt = lastChat
+					};
+				})
+				.OrderByDescending(f => f.LastChatAt)
+				.ToList();
+
+			return result;
+		}
+
 	}
 }

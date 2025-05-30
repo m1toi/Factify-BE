@@ -97,5 +97,14 @@ namespace SocialMediaApp.Controllers
 			_friendshipService.DeleteFriendship(friendshipId);
 			return NoContent();
 		}
+
+		[HttpGet("friends-for-share")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public ActionResult<List<FriendForShareDto>> GetFriendsForShare()
+		{
+			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+			var list = _friendshipService.GetFriendsForShare(userId);
+			return Ok(list);
+		}
 	}
 }
