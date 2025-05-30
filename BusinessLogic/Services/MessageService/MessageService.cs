@@ -119,7 +119,6 @@ namespace SocialMediaApp.BusinessLogic.Services.MessageService
 				HasUnread = receiverUnread > 0,
 			};
 
-			// Trimitem la amândoi participanții (expeditor + destinatar)
 			await _hubContext
 				.Clients
 				.Users(new[] { messageDto.SenderId.ToString(), receiverId.ToString() })
