@@ -64,16 +64,15 @@ namespace SocialMediaApp.Controllers
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-			var friendship = _friendshipService.GetFriendship(friendshipId);
-			if (friendship == null)
-				return NotFound("Friendship not found.");
-			if (friendship.FriendId != userId)
-				return Forbid("You are not authorized to accept this friend request.");
-			if (friendship.IsConfirmed)
-				return BadRequest("Friendship already confirmed.");
-
 			try
 			{
+				var friendship = _friendshipService.GetFriendship(friendshipId);
+				if (friendship == null)
+					return NotFound("Friendship not found.");
+				if (friendship.FriendId != userId)
+					return Forbid("You are not authorized to accept this friend request.");
+				if (friendship.IsConfirmed)
+					return Ok(friendship);
 				var updated = await _friendshipService.AcceptFriendRequest(friendshipId);
 				return Ok(updated);
 			}

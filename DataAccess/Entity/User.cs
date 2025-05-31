@@ -18,5 +18,8 @@
 		public List<Conversation> ConversationsAsUser1 { get; set; } // Conversations where this user is User1
 		public List<Conversation> ConversationsAsUser2 { get; set; } // Conversations where this user is User2
 		public List<Message> SentMessages { get; set; }              // Messages sent by this user
+		public List<Notification> SentNotifications { get; set; }
+		public List<Notification> ReceivedNotifications { get; set; }
+
 	}
 }

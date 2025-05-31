@@ -21,6 +21,8 @@ using SocialMediaApp.DataAccess.Repositories.FriendshipRepository;
 using SocialMediaApp.BusinessLogic.Services.MessageService;
 using SocialMediaApp.BusinessLogic.Services.ConversationService;
 using SocialMediaApp.BusinessLogic.Services.FriendshipService;
+using SocialMediaApp.BusinessLogic.Services.NotificationService;
+using SocialMediaApp.DataAccess.Repositories.NotificationRepository;
 
 namespace SocialMediaApp.BusinessLogic.Extensions
 {
@@ -40,7 +42,9 @@ namespace SocialMediaApp.BusinessLogic.Extensions
 			services.AddScoped<IUserSeenPostRepository, UserSeenPostRepository>();
 			services.AddScoped<IMessageRepository, MessageRepository>();
 			services.AddScoped<IConversationRepository, ConversationRepository>();
-			services.AddScoped<IFriendshipRepository, FriendshipRepository>();
+			services.AddScoped<IFriendshipRepository, FriendshipRepository>(); 
+			services.AddScoped<INotificationRepository, NotificationRepository>();
+
 
 			//Configure services
 			services.AddScoped<ICategoryService, CategoryService>();
@@ -53,6 +57,8 @@ namespace SocialMediaApp.BusinessLogic.Extensions
 			services.AddScoped<IMessageService, MessageService>();
 			services.AddScoped<IConversationService, ConversationService>();
 			services.AddScoped<IFriendshipService, FriendshipService>();
+			services.AddScoped<INotificationService, NotificationService>();
+
 		}
 		public static void ConfigureDbContext(this IServiceCollection services, string connectionString)
 		{

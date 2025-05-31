@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using SocialMediaApp.BusinessLogic.Mapping;
+using SocialMediaApp.BusinessLogic.Services.NotificationService;
 using SocialMediaApp.DataAccess.Dtos.FriendshipDto;
 using SocialMediaApp.DataAccess.Entity;
 using SocialMediaApp.DataAccess.Repositories.ConversationRepository;
@@ -13,14 +14,17 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 		private readonly IFriendshipRepository _friendshipRepository;
 		private readonly IConversationRepository _conversationRepository;
 		private readonly IHubContext<FriendshipHub> _hubContext;
+		private readonly INotificationService _notificationService;
 
 		public FriendshipService(IFriendshipRepository friendshipRepository,
 			IHubContext<FriendshipHub> hubContext,
-			IConversationRepository conversationRepository)
+			IConversationRepository conversationRepository,
+			INotificationService notificationService)
 		{
 			_friendshipRepository = friendshipRepository;
 			_hubContext = hubContext;
 			_conversationRepository = conversationRepository;
+			_notificationService = notificationService;
 		}
 
 		public bool AreUsersFriends(int userId, int friendId)
@@ -46,6 +50,12 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 			var createdFriendship = _friendshipRepository.CreateFriendship(friendshipEntity);
 			var createdDto = createdFriendship.ToFriendshipResponseDto();
 
+			_notificationService.CreateFriendRequestNotification(
+				friendshipDto.UserId,
+				friendshipDto.FriendId,
+				createdFriendship.FriendshipId
+			);
+
 			await _hubContext.Clients
 				.User(createdDto.FriendId.ToString())
 				.SendAsync("FriendRequestReceived", createdDto);
@@ -61,7 +71,7 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 				throw new Exception("Friendship not found.");
 
 			if (entity.IsConfirmed)
-				throw new Exception("Friendship already confirmed.");
+				return entity.ToFriendshipResponseDto();
 
 			// 2️⃣ update state
 			entity.IsConfirmed = true;

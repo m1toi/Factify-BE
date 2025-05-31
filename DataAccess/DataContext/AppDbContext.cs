@@ -15,6 +15,7 @@ namespace SocialMediaApp.DataAccess.DataContext
 		public DbSet<Friendship> Friendships { get; set; }
 		public DbSet<Conversation> Conversations { get; set; }
 		public DbSet<Message> Messages { get; set; }
+		public DbSet<Notification> Notifications { get; set; }
 
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -135,6 +136,23 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.WithMany()
 				.HasForeignKey(m => m.PostId)
 				.OnDelete(DeleteBehavior.SetNull);
+
+			modelBuilder.Entity<Notification>()
+				.HasOne(n => n.FromUser)
+				.WithMany(u => u.SentNotifications)
+				.HasForeignKey(n => n.FromUserId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Notification>()
+				.HasOne(n => n.ToUser)
+				.WithMany(u => u.ReceivedNotifications)
+				.HasForeignKey(n => n.ToUserId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Notification>()
+				.Property(n => n.Type)
+				.HasConversion<string>(); // Salvăm enum-ul ca string pentru lizibilitate
+
 
 
 			modelBuilder.Entity<Role>().HasData(
