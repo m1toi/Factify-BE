@@ -1,4 +1,5 @@
-﻿using SocialMediaApp.DataAccess.DataContext;
+﻿using Microsoft.EntityFrameworkCore;
+using SocialMediaApp.DataAccess.DataContext;
 using SocialMediaApp.DataAccess.Entity;
 
 namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
@@ -16,7 +17,8 @@ namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 		public List<Notification> GetUserNotifications(int userId)
 		{
 			return _context.Notifications
-				.Where(n => n.ToUserId == userId && !n.IsRead)    // filtrăm numai IsRead = false
+				.Where(n => n.ToUserId == userId && !n.IsRead)    
+				.Include(n => n.FromUser)   
 				.OrderByDescending(n => n.CreatedAt)
 				.ToList();
 		}

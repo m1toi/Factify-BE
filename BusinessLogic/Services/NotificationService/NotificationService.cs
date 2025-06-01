@@ -30,7 +30,7 @@ namespace SocialMediaApp.BusinessLogic.Services.NotificationService
 				FromUserId = fromUserId,
 				ToUserId = toUserId,
 				Type = NotificationType.FriendRequest,
-				Message = "You received a friend request.",
+				Message = "sent you a friend request.",
 				IsRead = false,
 				ReferenceId = friendshipId,
 				CreatedAt = DateTime.UtcNow

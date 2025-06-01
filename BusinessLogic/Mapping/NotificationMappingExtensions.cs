@@ -12,6 +12,7 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 				NotificationId = notification.NotificationId,
 				FromUserId = notification.FromUserId,
 				FromUsername = notification.FromUser?.Username,
+				FromUserProfilePicture = notification.FromUser?.ProfilePicture,
 				ToUserId = notification.ToUserId,
 				Type = notification.Type,
 				Message = notification.Message,
