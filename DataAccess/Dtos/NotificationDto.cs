@@ -15,6 +15,6 @@ namespace SocialMediaApp.DataAccess.Dtos.NotificationDto
 		public string? FromUserProfilePicture { get; set; }
 
 		public bool IsRead { get; set; }
-		public DateTime CreatedAt { get; set; }
+		public DateTimeOffset CreatedAt { get; set; }
 	}
 }

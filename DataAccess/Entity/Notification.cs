@@ -17,6 +17,6 @@ namespace SocialMediaApp.DataAccess.Entity
 
 		public int? ReferenceId { get; set; }
 		public bool IsRead { get; set; }
-		public DateTime CreatedAt { get; set; }
+		public DateTimeOffset CreatedAt { get; set; }
 	}
 }

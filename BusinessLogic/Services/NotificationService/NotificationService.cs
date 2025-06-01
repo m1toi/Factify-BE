@@ -33,7 +33,7 @@ namespace SocialMediaApp.BusinessLogic.Services.NotificationService
 				Message = "sent you a friend request.",
 				IsRead = false,
 				ReferenceId = friendshipId,
-				CreatedAt = DateTime.UtcNow
+				CreatedAt = DateTimeOffset.UtcNow
 			};
 
 			_notificationRepo.CreateNotification(notification);
