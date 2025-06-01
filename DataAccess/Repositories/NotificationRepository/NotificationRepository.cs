@@ -16,7 +16,7 @@ namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 		public List<Notification> GetUserNotifications(int userId)
 		{
 			return _context.Notifications
-				.Where(n => n.ToUserId == userId)
+				.Where(n => n.ToUserId == userId && !n.IsRead)    // filtrăm numai IsRead = false
 				.OrderByDescending(n => n.CreatedAt)
 				.ToList();
 		}

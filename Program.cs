@@ -128,6 +128,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<MessageHub>("/hubs/message");
+app.MapHub<NotificationHub>("/hubs/notifications");
 app.MapHub<FriendshipHub>("/hubs/friendships");
 
 app.Run();
