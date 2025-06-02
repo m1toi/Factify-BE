@@ -25,7 +25,7 @@ namespace SocialMediaApp.BusinessLogic.Services.ReportService
 			var existing = _reportRepository.GetPendingByPostId(dto.PostId);
 			if (existing != null)
 			{
-				throw new Exception("This post is already reported and pending review.");
+				throw new Exception("This post has already been reported by another user and will be reviewed shortly.");
 			}
 
 			var report = dto.ToReport(reporterUserId);
