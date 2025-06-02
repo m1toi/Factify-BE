@@ -20,6 +20,8 @@
 		public List<Message> SentMessages { get; set; }              // Messages sent by this user
 		public List<Notification> SentNotifications { get; set; }
 		public List<Notification> ReceivedNotifications { get; set; }
+		public List<Report> ReportsMade { get; set; } = new();
+		public List<Report> ReportsResolved { get; set; } = new();
 
 	}
 }

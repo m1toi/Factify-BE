@@ -16,6 +16,8 @@ namespace SocialMediaApp.DataAccess.DataContext
 		public DbSet<Conversation> Conversations { get; set; }
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<Notification> Notifications { get; set; }
+		public DbSet<Report> Reports { get; set; }
+
 
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -151,9 +153,34 @@ namespace SocialMediaApp.DataAccess.DataContext
 
 			modelBuilder.Entity<Notification>()
 				.Property(n => n.Type)
-				.HasConversion<string>(); // Salvăm enum-ul ca string pentru lizibilitate
+				.HasConversion<string>(); 
 
+			// ─── REPORT relations ─────────────────────────────────
+			modelBuilder.Entity<Report>()
+				.HasOne(r => r.Post)
+				.WithMany(p => p.Reports)          
+				.HasForeignKey(r => r.PostId)
+				.OnDelete(DeleteBehavior.Cascade);  
 
+			modelBuilder.Entity<Report>()
+				.HasOne(r => r.ReporterUser)
+				.WithMany(u => u.ReportsMade)       
+				.HasForeignKey(r => r.ReporterUserId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Report>()
+				.HasOne(r => r.AdminUser)
+				.WithMany(u => u.ReportsResolved)   
+				.HasForeignKey(r => r.AdminUserId)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Report>()
+				.Property(r => r.Reason)
+				.HasConversion<string>();
+
+			modelBuilder.Entity<Report>()
+				.Property(r => r.Status)
+				.HasConversion<string>();
 
 			modelBuilder.Entity<Role>().HasData(
 				new Role { RoleId = 1, Name = "Admin" },

@@ -12,5 +12,6 @@
 		public Category Category { get; set; }
 		public List<UserSeenPost> UserSeenPosts { get; set; }
 		public List<UserInteraction> Interactions { get; set; }
+		public List<Report> Reports { get; set; } = new();
 	}
 }
