@@ -57,13 +57,13 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.HasOne(ui => ui.User)
 				.WithMany(u => u.Interactions)
 				.HasForeignKey(ui => ui.UserId)
-				.OnDelete(DeleteBehavior.NoAction);  // Prevents cascading delete
+				.OnDelete(DeleteBehavior.Restrict);  // Prevents cascading delete
 
 			modelBuilder.Entity<UserInteraction>()
 				.HasOne(ui => ui.Post)
 				.WithMany(p => p.Interactions)
 				.HasForeignKey(ui => ui.PostId)
-				.OnDelete(DeleteBehavior.NoAction);
+				.OnDelete(DeleteBehavior.Cascade);
 
 			// Category - Posts Relationship
 			modelBuilder.Entity<Post>()
@@ -81,15 +81,15 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.HasOne(usp => usp.User)
 				.WithMany(u => u.SeenPosts)      // Ensure your User entity has a property: List<UserSeenPost> SeenPosts { get; set; }
 				.HasForeignKey(usp => usp.UserId)
-				.OnDelete(DeleteBehavior.NoAction); // or NO ACTION, depending on your design
+				.OnDelete(DeleteBehavior.Restrict); // or NO ACTION, depending on your design
 
 			// Configure relationship from UserSeenPost to Post
 			modelBuilder.Entity<UserSeenPost>()
 				.HasOne(usp => usp.Post)
 				.WithMany(p => p.UserSeenPosts)  // Ensure your Post entity has a property: List<UserSeenPost> UserSeenPosts { get; set; }
 				.HasForeignKey(usp => usp.PostId)
-				.OnDelete(DeleteBehavior.NoAction);
-		
+				.OnDelete(DeleteBehavior.Cascade);
+
 			// FRIENDSHIP relations:
 			modelBuilder.Entity<Friendship>()
 				.HasOne(f => f.User)
@@ -137,7 +137,7 @@ namespace SocialMediaApp.DataAccess.DataContext
 				.HasOne(m => m.Post)
 				.WithMany()
 				.HasForeignKey(m => m.PostId)
-				.OnDelete(DeleteBehavior.SetNull);
+				.OnDelete(DeleteBehavior.Cascade);
 
 			modelBuilder.Entity<Notification>()
 				.HasOne(n => n.FromUser)
@@ -153,24 +153,24 @@ namespace SocialMediaApp.DataAccess.DataContext
 
 			modelBuilder.Entity<Notification>()
 				.Property(n => n.Type)
-				.HasConversion<string>(); 
+				.HasConversion<string>();
 
 			// ─── REPORT relations ─────────────────────────────────
 			modelBuilder.Entity<Report>()
 				.HasOne(r => r.Post)
-				.WithMany(p => p.Reports)          
+				.WithMany(p => p.Reports)
 				.HasForeignKey(r => r.PostId)
-				.OnDelete(DeleteBehavior.Cascade);  
+				.OnDelete(DeleteBehavior.Cascade);
 
 			modelBuilder.Entity<Report>()
 				.HasOne(r => r.ReporterUser)
-				.WithMany(u => u.ReportsMade)       
+				.WithMany(u => u.ReportsMade)
 				.HasForeignKey(r => r.ReporterUserId)
 				.OnDelete(DeleteBehavior.Restrict);
 
 			modelBuilder.Entity<Report>()
 				.HasOne(r => r.AdminUser)
-				.WithMany(u => u.ReportsResolved)   
+				.WithMany(u => u.ReportsResolved)
 				.HasForeignKey(r => r.AdminUserId)
 				.OnDelete(DeleteBehavior.Restrict);
 
