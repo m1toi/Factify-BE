@@ -32,5 +32,12 @@ namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 				_context.SaveChanges();
 			}
 		}
+
+		public Notification GetNotificationById(int notificationId)
+		{
+			return _context.Notifications
+				.Include(n => n.FromUser)   // IMPORTANT: includem relația FromUser
+				.FirstOrDefault(n => n.NotificationId == notificationId);
+		}
 	}
 }

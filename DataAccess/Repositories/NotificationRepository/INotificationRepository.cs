@@ -7,5 +7,7 @@ namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 		void CreateNotification(Notification notification);
 		List<Notification> GetUserNotifications(int userId);
 		void MarkAsRead(int notificationId);
+		Notification GetNotificationById(int notificationId);
+
 	}
 }

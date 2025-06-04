@@ -38,7 +38,10 @@ namespace SocialMediaApp.BusinessLogic.Services.NotificationService
 
 			_notificationRepo.CreateNotification(notification);
 
-			var dto = notification.ToNotificationDto();
+			var fullNotification = _notificationRepo.GetNotificationById(notification.NotificationId);
+
+
+			var dto = fullNotification.ToNotificationDto();
 
 			_hubContext.Clients.User(toUserId.ToString())
 				.SendAsync("ReceiveNotification", dto);
