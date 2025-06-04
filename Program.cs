@@ -81,7 +81,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 				var accessToken = context.Request.Query["access_token"];
 				var path = context.HttpContext.Request.Path;
 				if (!string.IsNullOrEmpty(accessToken) &&
-					(path.StartsWithSegments("/hubs/message")))
+					(path.StartsWithSegments("/hubs/message")
+					 || path.StartsWithSegments("/hubs/notifications")
+					 || path.StartsWithSegments("/hubs/friendships")))
 				{
 					context.Token = accessToken;
 				}
