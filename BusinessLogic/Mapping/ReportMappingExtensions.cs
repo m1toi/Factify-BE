@@ -22,6 +22,7 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 
 		public static ReportResponseDto ToReportResponseDto(this Report report)
 		{
+
 			return new ReportResponseDto
 			{
 				ReportId = report.ReportId,
@@ -42,6 +43,7 @@ namespace SocialMediaApp.BusinessLogic.Mapping
 
 				ReporterUserId = report.ReporterUserId,
 				ReporterUsername = report.ReporterUser.Username,
+				ReporterProfilePicture = report.ReporterUser?.ProfilePicture,
 
 				Reason = report.Reason,
 				Status = report.Status,

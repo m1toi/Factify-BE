@@ -12,7 +12,7 @@ using SocialMediaApp.DataAccess.Repositories.UserRepository;
 
 namespace SocialMediaApp.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize]
 	[Route("/api/Users")]
     public class UserController : ControllerBase
     {
@@ -75,7 +75,6 @@ namespace SocialMediaApp.Controllers
         }
 
 		[HttpGet("current")]
-		[Authorize(Roles = "User")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

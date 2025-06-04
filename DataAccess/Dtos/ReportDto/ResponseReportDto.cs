@@ -13,6 +13,7 @@ namespace SocialMediaApp.DataAccess.Dtos.ReportDto
 
 		public int ReporterUserId { get; set; }
 		public string ReporterUsername { get; set; }
+		public string? ReporterProfilePicture { get; set; }
 
 		public ReportReason Reason { get; set; }
 		public ReportStatus Status { get; set; }

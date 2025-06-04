@@ -7,7 +7,7 @@ using SocialMediaApp.DataAccess.Entity;
 
 namespace SocialMediaApp.Controllers
 {
-	[Authorize(Roles = "User")]
+	[Authorize]
 	[Route("/api/UserPreference")]
 	public class UserPreferenceController : ControllerBase
 	{

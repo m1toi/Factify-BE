@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SocialMediaApp.BusinessLogic.Services.FeedService;
 
 namespace SocialMediaApp.Controllers
 {
+	[Authorize]
 	[Route("api/Feed")]
 	public class FeedController : ControllerBase
 	{
