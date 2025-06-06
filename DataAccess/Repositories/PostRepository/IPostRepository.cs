@@ -7,7 +7,7 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 		List<Post> GetAll();
 		Post Get(int id);
 		List<Post> GetByUser(int userId, int page, int pageSize);
-		List<Post> GetPostsByCategoriesExcludingSeen(List<int> categoryIds, List<int> seenPostIds, int totalPosts = 20);
+		List<Post> GetPostsByCategoryExcludingSeen(int categoryId, List<int> seenPostIds, int count);
 		Post Create(Post post);
 		Post Update(int id, Post post);
 		void Delete(int id);
