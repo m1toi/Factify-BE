@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35806.99 d17.13
+VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialMediaApp", "SocialMediaApp.csproj", "{B6340D38-3DC2-4921-9FC0-48240E0FF304}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialMediaApp.Tests", "..\SocialMediaApp.Tests\SocialMediaApp.Tests.csproj", "{03DA7120-E200-4164-8E16-E382FAF03F86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B6340D38-3DC2-4921-9FC0-48240E0FF304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6340D38-3DC2-4921-9FC0-48240E0FF304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6340D38-3DC2-4921-9FC0-48240E0FF304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03DA7120-E200-4164-8E16-E382FAF03F86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03DA7120-E200-4164-8E16-E382FAF03F86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03DA7120-E200-4164-8E16-E382FAF03F86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03DA7120-E200-4164-8E16-E382FAF03F86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
