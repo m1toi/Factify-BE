@@ -17,6 +17,8 @@ namespace SocialMediaApp.DataAccess.DataContext
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<Notification> Notifications { get; set; }
 		public DbSet<Report> Reports { get; set; }
+		public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
+
 
 
 		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }

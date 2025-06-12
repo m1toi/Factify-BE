@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SocialMediaApp.BusinessLogic.Services.PasswordResetService;
 using SocialMediaApp.BusinessLogic.Services.PostService;
 using SocialMediaApp.BusinessLogic.Services.UserService;
 using SocialMediaApp.DataAccess.Dtos.LoginDto;
+using SocialMediaApp.DataAccess.Dtos.PasswordDto;
 using SocialMediaApp.DataAccess.Dtos.PostDto;
 using SocialMediaApp.DataAccess.Dtos.UserDto;
 using SocialMediaApp.DataAccess.Entity;
@@ -18,11 +20,12 @@ namespace SocialMediaApp.Controllers
     {
         private readonly IUserService _userService;
 		private readonly IPostService _postService;
-
-		public UserController(IUserService userService, IPostService postService)
+		private readonly IPasswordResetService _passwordResetService;
+		public UserController(IUserService userService, IPostService postService, IPasswordResetService passwordResetService)
         {
             _userService = userService;
 			_postService = postService;
+			_passwordResetService = passwordResetService;
 		}
 
         [AllowAnonymous]
@@ -169,5 +172,45 @@ namespace SocialMediaApp.Controllers
             _userService.Delete(id);
             return NoContent();
         }
-    }
+
+		// POST api/Users/forgot-password
+		[AllowAnonymous]
+		[HttpPost("forgot-password")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			await _passwordResetService.RequestPasswordResetAsync(dto.Email);
+			return Ok(new
+			{
+				message = "If that email exists, you will receive instructions to reset your password."
+			});
+		}
+
+		// POST api/Users/reset-password
+		[AllowAnonymous]
+		[HttpPost("reset-password")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			try
+			{
+				await _passwordResetService.ResetPasswordAsync(dto.Token, dto.NewPassword);
+				return Ok(new { message = "Your password has been reset." });
+			}
+			catch (Exception ex)
+			{
+				// poți returna 400 cu un mesaj concret
+				return BadRequest(new { error = ex.Message });
+			}
+		}
+
+	}
 }

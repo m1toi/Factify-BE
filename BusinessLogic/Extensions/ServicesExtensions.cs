@@ -25,6 +25,8 @@ using SocialMediaApp.BusinessLogic.Services.NotificationService;
 using SocialMediaApp.DataAccess.Repositories.NotificationRepository;
 using SocialMediaApp.DataAccess.Repositories.ReportRepository;
 using SocialMediaApp.BusinessLogic.Services.ReportService;
+using SocialMediaApp.BusinessLogic.Services.EmailSender;
+using SocialMediaApp.BusinessLogic.Services.PasswordResetService;
 
 namespace SocialMediaApp.BusinessLogic.Extensions
 {
@@ -61,6 +63,8 @@ namespace SocialMediaApp.BusinessLogic.Extensions
 			services.AddScoped<IFriendshipService, FriendshipService>();
 			services.AddScoped<INotificationService, NotificationService>();
 			services.AddScoped<IReportService, ReportService>();
+			services.AddTransient<IEmailSender, SmtpEmailSender>();
+			services.AddScoped<IPasswordResetService, PasswordResetService>();
 
 		}
 		public static void ConfigureDbContext(this IServiceCollection services, string connectionString)
