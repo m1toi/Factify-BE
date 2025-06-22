@@ -33,7 +33,7 @@ namespace SocialMediaApp.BusinessLogic.Services.AuthenticationService
 				issuer: "Backend",
 				audience: "Frontend",
 				claims: claims,
-				expires: DateTime.Now.AddMinutes(30),
+				expires: DateTime.Now.AddMinutes(300),
 				signingCredentials: creds
 				);
 
