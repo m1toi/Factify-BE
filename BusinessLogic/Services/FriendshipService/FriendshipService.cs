@@ -3,6 +3,7 @@ using SocialMediaApp.BusinessLogic.Mapping;
 using SocialMediaApp.BusinessLogic.Services.NotificationService;
 using SocialMediaApp.DataAccess.Dtos.FriendshipDto;
 using SocialMediaApp.DataAccess.Entity;
+using SocialMediaApp.DataAccess.Entity.Enums;
 using SocialMediaApp.DataAccess.Repositories.ConversationRepository;
 using SocialMediaApp.DataAccess.Repositories.FriendshipRepository;
 using SocialMediaApp.SignalR;
@@ -15,16 +16,19 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 		private readonly IConversationRepository _conversationRepository;
 		private readonly IHubContext<FriendshipHub> _hubContext;
 		private readonly INotificationService _notificationService;
+		private readonly IHubContext<NotificationHub> _notificationHub;
 
 		public FriendshipService(IFriendshipRepository friendshipRepository,
 			IHubContext<FriendshipHub> hubContext,
 			IConversationRepository conversationRepository,
-			INotificationService notificationService)
+			INotificationService notificationService,
+			IHubContext<NotificationHub> notificationHub)
 		{
 			_friendshipRepository = friendshipRepository;
 			_hubContext = hubContext;
 			_conversationRepository = conversationRepository;
 			_notificationService = notificationService;
+			_notificationHub = notificationHub;
 		}
 
 		public bool AreUsersFriends(int userId, int friendId)
@@ -98,10 +102,30 @@ namespace SocialMediaApp.BusinessLogic.Services.FriendshipService
 		}
 
 
-		public void DeleteFriendship(int friendshipId)
+		// FriendshipService.cs
+		public async Task DeleteFriendship(int friendshipId, int initiatorId)
 		{
+			// 1) Ia entitatea
+			var friendship = _friendshipRepository.GetFriendship(friendshipId);
+
+			// 2) Şterge relaţia
 			_friendshipRepository.DeleteFriendship(friendshipId);
+
+			// 3) Marchează notificarea drept citită
+			_notificationService.MarkNotificationAsReadByReference(
+				friendshipId, NotificationType.FriendRequest
+			);
+
+			// 4) Trimite eveniment doar către „celălalt” user
+			var otherUserId = friendship.UserId == initiatorId
+				? friendship.FriendId
+				: friendship.UserId;
+
+			await _notificationHub.Clients
+				.User(otherUserId.ToString())
+				.SendAsync("FriendRequestCancelled", friendshipId);
 		}
+
 
 		public List<FriendForShareDto> GetFriendsForShare(int currentUserId)
 		{

@@ -6,7 +6,7 @@ namespace SocialMediaApp.BusinessLogic.Services.PasswordResetService
 {
 	public class PasswordResetService : IPasswordResetService
 	{
-		private readonly AppDbContext _ctx;
+		private readonly AppDbContext _context;
 		private readonly IEmailSender _mailer;
 		private readonly IConfiguration _cfg;
 
@@ -15,14 +15,14 @@ namespace SocialMediaApp.BusinessLogic.Services.PasswordResetService
 			IEmailSender mailer,
 			IConfiguration cfg)
 		{
-			_ctx = ctx;
+			_context = ctx;
 			_mailer = mailer;
 			_cfg = cfg;
 		}
 
 		public async Task RequestPasswordResetAsync(string email)
 		{
-			var user = _ctx.Users.SingleOrDefault(u => u.Email == email);
+			var user = _context.Users.SingleOrDefault(u => u.Email == email);
 			// întotdeauna răspunzi generic mai jos, chiar dacă user e null
 
 			var token = Guid.NewGuid().ToString("N");
@@ -31,18 +31,18 @@ namespace SocialMediaApp.BusinessLogic.Services.PasswordResetService
 			if (user != null)
 			{
 				// marchează orice token vechi ca folosit
-				var old = _ctx.PasswordResetTokens
+				var old = _context.PasswordResetTokens
 							  .Where(t => t.UserId == user.UserId && !t.Used);
 				foreach (var o in old) o.Used = true;
 
-				_ctx.PasswordResetTokens.Add(new PasswordResetToken
+				_context.PasswordResetTokens.Add(new PasswordResetToken
 				{
 					UserId = user.UserId,
 					Token = token,
 					ExpirationUtc = expiry,
 					Used = false
 				});
-				await _ctx.SaveChangesAsync();
+				await _context.SaveChangesAsync();
 
 				// trimite email
 				var front = _cfg["Frontend:BaseUrl"]!.TrimEnd('/');
@@ -56,7 +56,7 @@ namespace SocialMediaApp.BusinessLogic.Services.PasswordResetService
 
 		public async Task ResetPasswordAsync(string token, string newPassword)
 		{
-			var pr = _ctx.PasswordResetTokens
+			var pr = _context.PasswordResetTokens
 						 .Include(t => t.User)
 						 .SingleOrDefault(t => t.Token == token);
 
@@ -68,7 +68,8 @@ namespace SocialMediaApp.BusinessLogic.Services.PasswordResetService
 			// hash-uieşte parola
 			pr.User.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
 			pr.Used = true;
-			await _ctx.SaveChangesAsync();
+			_context.Users.Update(pr.User);
+			await _context.SaveChangesAsync();
 		}
 	}
 

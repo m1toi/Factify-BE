@@ -36,13 +36,27 @@ namespace SocialMediaApp.Controllers
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public IActionResult Register([FromBody] UserRequestDto userDto)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            _userService.Register(userDto);
-            return Ok();
-        }
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			try
+			{
+				_userService.Register(userDto);
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				if (ex.Message.Contains("already exists"))
+				{
+					// dacă e username, expui exact “username-ul există deja”
+					if (ex.Message.Contains("username"))
+						return Conflict(new { error = "Username already exists." });
+					// dacă e email, nu divulgăm că email-ul există
+					return Conflict(new { error = "Could not create account. Try a different email" });
+				}
+				return StatusCode(500, new { error = "Server error. Please try again later." });
+			}
+		}
 
 		[AllowAnonymous]
 		[HttpPost("login")]
@@ -51,12 +65,23 @@ namespace SocialMediaApp.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public ActionResult<string> Login([FromBody] LoginRequestDto loginDto)
 		{
-			if(!ModelState.IsValid)
-			{
+			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
+
+			try
+			{
+				var token = _userService.Login(loginDto);
+				return Ok(token);
 			}
-            string token = _userService.Login(loginDto);
-            return Ok(token);
+			catch (Exception ex)
+			{
+				// Poţi filtra după tipul excepţiei (ideea e să nu prindem System.Exception generic)
+				if (ex.Message.Contains("not found") || ex.Message.Contains("Invalid password"))
+					// expui doar un mesaj comun
+					return BadRequest(new { error = "Invalid email or password" });
+				// alt gen de eroare
+				return StatusCode(500, new { error = "Server error. Please try again later." });
+			}
 		}
 
 		[HttpGet]

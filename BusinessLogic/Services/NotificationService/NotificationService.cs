@@ -54,6 +54,11 @@ namespace SocialMediaApp.BusinessLogic.Services.NotificationService
 			return list.ToNotificationDtoList();
 		}
 
+		public void MarkNotificationAsReadByReference(int referenceId, NotificationType type)
+		{
+			_notificationRepo.MarkAsReadByReference(referenceId, type);
+		}
+
 		public void MarkNotificationAsRead(int notificationId)
 		{
 			_notificationRepo.MarkAsRead(notificationId);

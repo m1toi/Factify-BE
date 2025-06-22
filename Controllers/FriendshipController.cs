@@ -85,7 +85,7 @@ namespace SocialMediaApp.Controllers
 		[HttpDelete("{friendshipId}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
-		public IActionResult DeleteFriendship([FromRoute] int friendshipId)
+		public async Task<IActionResult> DeleteFriendship([FromRoute] int friendshipId)
 		{
 			var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 			var friendship = _friendshipService.GetFriendship(friendshipId);
@@ -93,7 +93,7 @@ namespace SocialMediaApp.Controllers
 			if (friendship.UserId != userId && friendship.FriendId != userId)
 				return Forbid("You are not authorized to delete this friendship.");
 
-			_friendshipService.DeleteFriendship(friendshipId);
+			await _friendshipService.DeleteFriendship(friendshipId, userId); 
 			return NoContent();
 		}
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SocialMediaApp.DataAccess.DataContext;
 using SocialMediaApp.DataAccess.Entity;
+using SocialMediaApp.DataAccess.Entity.Enums;
 
 namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 {
@@ -32,6 +33,22 @@ namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 				_context.SaveChanges();
 			}
 		}
+
+		public void MarkAsReadByReference(int referenceId, NotificationType type)
+		{
+			var notif = _context.Notifications
+				.FirstOrDefault(n =>
+					n.ReferenceId == referenceId
+					&& n.Type == type
+					&& !n.IsRead
+				);
+			if (notif != null)
+			{
+				notif.IsRead = true;
+				_context.SaveChanges();
+			}
+		}
+
 
 		public Notification GetNotificationById(int notificationId)
 		{

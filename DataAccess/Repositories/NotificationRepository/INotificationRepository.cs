@@ -1,4 +1,5 @@
 ﻿using SocialMediaApp.DataAccess.Entity;
+using SocialMediaApp.DataAccess.Entity.Enums;
 
 namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 {
@@ -8,6 +9,6 @@ namespace SocialMediaApp.DataAccess.Repositories.NotificationRepository
 		List<Notification> GetUserNotifications(int userId);
 		void MarkAsRead(int notificationId);
 		Notification GetNotificationById(int notificationId);
-
+		void MarkAsReadByReference(int referenceId, NotificationType type);
 	}
 }
