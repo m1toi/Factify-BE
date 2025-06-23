@@ -32,19 +32,25 @@ namespace SocialMediaApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CategoryRequestDto categoryDto)
-        {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+		public IActionResult Create([FromBody] CategoryRequestDto categoryDto)
+		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
 
-            _categoryService.Create(categoryDto);
+			try
+			{
+				_categoryService.Create(categoryDto);
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				if (ex.Message.Contains("already exists"))
+					return Conflict(new { error = "Category already exists" });
+				return BadRequest(new { error = "Could not create category. Please try again." });
+			}
+		}
 
-            return Ok();
-        }
-
-        [HttpPut("{id}")]
+		[HttpPut("{id}")]
         public IActionResult Update([FromRoute] int id, [FromBody] CategoryRequestDto updatedCategoryDto)
         {
             if (!ModelState.IsValid)
