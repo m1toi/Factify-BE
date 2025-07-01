@@ -13,7 +13,8 @@ namespace SocialMediaApp.DataAccess.Repositories.PostRepository
 		{
 			return _context.Posts
 						.Include(p => p.User)
-						.Include(p => p.Category)  
+						.Include(p => p.Category)
+						.Include(p => p.Interactions)
 						.ToList();
 		}
 		public Post Get(int id)
