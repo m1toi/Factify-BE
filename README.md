@@ -2,7 +2,7 @@
 
 This repository contains the backend server for the **Factify Social Media Learning Platform**. It is built with ASP.NET Core and is responsible for managing the database, handling business logic, user authentication, and serving data to the frontend client via a RESTful API and SignalR hubs.
 
-### ✨ Core Responsibilities
+###  Core Responsibilities
 -   **User Authentication & Authorization** using JWT.
 -   **RESTful API** for managing posts, users, friends, and interactions.
 -   **Personalized Feed Generation Algorithm** to deliver relevant content.
@@ -12,9 +12,9 @@ This repository contains the backend server for the **Factify Social Media Learn
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
--   **.NET 8**
+-   **.NET 9**
 -   **ASP.NET Core**
 -   **Entity Framework Core**
 -   **SignalR**
@@ -23,7 +23,7 @@ This repository contains the backend server for the **Factify Social Media Learn
 
 ---
 
-## ⚙️ Installation & Setup
+##  Installation & Setup
 
 To run the backend server locally, follow these steps.
 
